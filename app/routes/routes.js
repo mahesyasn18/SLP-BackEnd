@@ -1,9 +1,24 @@
+const { authJwt } = require("../middleware");
+const controller = require("../controllers/admin_controller");
+
 module.exports = app => {
-    const admin = require("../controllers/admin_controller.js");
-    var router = require("express").Router();
+    app.use(function(req, res, next) {
+        res.header(
+          "Access-Control-Allow-Headers",
+          "Origin, Content-Type, Accept"
+        );
+        next();
+      });
 
-    router.post("/", admin.create);
-    router.get("/", admin.findAll);
+  app.get(
+    "/api/test/user",
+    [authJwt.verifyToken],
+    controller.userBoard
+  );
 
-    app.use('/api/slp', router)
+  app.get(
+    "/api/test/admin",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    controller.adminBoard
+  );
 };

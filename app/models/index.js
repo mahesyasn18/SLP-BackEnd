@@ -19,5 +19,14 @@ db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
 db.admin = require("./admin_migration.js")(sequelize, Sequelize);
+db.role = require("./role_migration.js")(sequelize, Sequelize);
 
+db.role.hasOne(db.admin, {
+  onDelete: 'RESTRICT',
+  onUpdate: 'RESTRICT'
+});
+db.admin.belongsTo(db.role);
+
+
+db.ROLES = ["admin", "mahasiswa"];
 module.exports = db;
