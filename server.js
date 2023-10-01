@@ -4,15 +4,15 @@ const cors = require("cors");
 const cookieSession = require("cookie-session");
 
 const app = express();
+
+//for react
 var corsOptions = {
     origin: "http://localhost:3000"
 };
-app.use(cors(corsOptions));
 
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 app.use(
   cookieSession({
     name: "bezkoder-session",
@@ -21,40 +21,22 @@ app.use(
   })
 );
 
+//for db
 const db = require("./app/models");
-
-const Role = db.role;
-const Admin = db.admin;
-
+const seeders = require("./app/seeders");
 db.sequelize.sync({force: true}).then(() => {
   console.log('Drop and Resync Db');
-  initial();
+  seeders.initialRole();
+  seeders.initialAdmin();
+  seeders.initialKelas();
+  seeders.initialProdi();
 });
+
+
 
 app.get("/", (req, res) => {
     res.json({ message: "Welcome to SLP Application" });
 });
-
-function initial() {
-  Role.create({
-    id: 1,
-    name: "admin"
-  });
- 
-  Role.create({
-    id: 2,
-    name: "user"
-  });
-
-  Admin.create({
-    id: 1,
-    nama: "Admin-01",
-    username: "admin",
-    password: "admin",
-    roleId: 1
-  })
-}
-
 
 
 require('./app/routes/auth.routes')(app);

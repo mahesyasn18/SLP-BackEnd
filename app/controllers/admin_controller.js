@@ -5,17 +5,17 @@ const Op = db.Sequelize.Op;
 exports.create = (req, res) => {
     if (!req.body.nama) {
       res.status(400).send({
-        message: "nama can not be empty!"
+        message: "nama cannot be empty!"
       });
       return;
     }else if(!req.body.username){
         res.status(400).send({
-            message: "username can not be empty!"
+            message: "username cannot be empty!"
           });
         return;
     }else if(!req.body.password){
         res.status(400).send({
-            message: "password can not be empty!"
+            message: "password cannot be empty!"
           });
         return;
     }
