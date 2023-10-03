@@ -73,17 +73,17 @@ exports.update = (req,res) => {
   .then(num => {
     if (num == 1) {
       res.send({
-        message: "Dosens was updated successfully."
+        message: "Dosen was updated successfully."
       });
     } else {
       res.send({
-        message: `Cannot update Dosens with id=${id}. Maybe Tutorial was not found or req.body is empty!`
+        message: `Cannot update Dosen with id=${id}. Maybe Dosen was not found or req.body is empty!`
       });
     }
   })
   .catch(err => {
     res.status(500).send({
-      message: "Error updating Tutorial with id=" + id
+      message: "Error updating Dosen with id=" + id
     });
   });
 };
@@ -97,17 +97,37 @@ exports.delete = (req, res) => {
     .then(num => {
       if (num == 1) {
         res.send({
-          message: "Dosens was deleted successfully!"
+          message: "Dosen was deleted successfully!"
         });
       } else {
         res.send({
-          message: `Cannot delete Dosens with id=${id}. Maybe Tutorial was not found!`
+          message: `Cannot delete Dosen with id=${id}. Maybe Tutorial was not found!`
         });
       }
     })
     .catch(err => {
       res.status(500).send({
-        message: "Could not delete Tutorial with id=" + id
+        message: "Could not delete Dosen with id=" + id
+      });
+    });
+};
+
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  Dosen.findByPk(id)
+    .then((data) => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Dosen with id=${id}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error retrieving Dosen with id=" + id,
       });
     });
 };
