@@ -8,6 +8,7 @@ const app = express();
 //for react
 var corsOptions = {
   origin: "http://localhost:3000",
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -15,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cookieSession({
-    name: "bezkoder-session",
+    name: "slp-session",
     keys: ["COOKIE_SECRET"],
     httpOnly: true,
   })
@@ -30,6 +31,8 @@ db.sequelize.sync({ force: true }).then(() => {
   seeders.initialAdmin();
   seeders.initialKelas();
   seeders.initialProdi();
+  seeders.initialAngkatan();
+  seeders.intialSemester();
 });
 // db.sequelize.sync({ force: true });
 // db.sequelize.sync();

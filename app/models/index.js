@@ -26,7 +26,15 @@ db.mahasiswa = require("./mahasiswa_migration.js")(sequelize, Sequelize);
 db.dosen = require("./dosen_migration.js")(sequelize, Sequelize);
 db.dosenWali = require("./dosen_wali_migration.js")(sequelize, Sequelize);
 db.angkatan = require("./angkatan_migration.js")(sequelize, Sequelize);
-
+db.jadwal = require("./jadwal_matkul.js")(sequelize, Sequelize);
+db.matakuliah = require("./mata_kuliah_migration.js")(sequelize, Sequelize);
+db.detailMatkul = require("./mata_kuliah_migration.js")(sequelize, Sequelize);
+db.semester = require("./semester_migration.js")(sequelize, Sequelize);
+db.perizinan = require("./perizinan_migratin.js")(sequelize, Sequelize);
+db.detailPerizinan = require("./detail_perizinan_migration.js")(
+  sequelize,
+  Sequelize
+);
 /* 
   ========================================
   Relation Admin
@@ -49,41 +57,33 @@ db.admin.belongsTo(db.role, {
 // Mahasiswa and Role relationship
 db.role.hasOne(db.mahasiswa, {
   foreignKey: "role_id",
-  as: "mahasiswaRole",
 });
 db.mahasiswa.belongsTo(db.role, {
   foreignKey: "role_id",
-  as: "mahasiswaRole",
 });
 
 // Mahasiswa and Prodi relationship
 db.prodi.hasOne(db.mahasiswa, {
   foreignKey: "prodi_id",
-  as: "prodi",
 });
 db.mahasiswa.belongsTo(db.prodi, {
   foreignKey: "prodi_id",
-  as: "prodi",
 });
 
 // Mahasiswa and Kelas relationship
 db.kelas.hasOne(db.mahasiswa, {
   foreignKey: "kelas_id",
-  as: "kelas",
 });
 db.mahasiswa.belongsTo(db.kelas, {
   foreignKey: "kelas_id",
-  as: "kelas",
 });
 
 //mahasiswa dan angkatan
 db.angkatan.hasOne(db.mahasiswa, {
   foreignKey: "angkatan_id",
-  as: "angkatan",
 });
 db.mahasiswa.belongsTo(db.angkatan, {
   foreignKey: "angkatan_id",
-  as: "angkatan",
 });
 
 /* 
@@ -95,53 +95,146 @@ db.mahasiswa.belongsTo(db.angkatan, {
 // Dosen and Role relationship
 db.role.hasOne(db.dosenWali, {
   foreignKey: "role_id",
-  as: "dosenWaliRole",
 });
 
 db.dosenWali.belongsTo(db.role, {
   foreignKey: "role_id",
-  as: "dosenWaliRole",
 });
 
 // dosenwali dan dosen
 db.dosen.hasOne(db.dosenWali, {
   foreignKey: "dosen_id",
-  as: "dosenWaliDosen",
 });
 
 db.dosenWali.belongsTo(db.dosen, {
   foreignKey: "dosen_id",
-  as: "dosenWaliDosen",
 });
 
 //dosenwali dan angkatan
 db.angkatan.hasOne(db.dosenWali, {
   foreignKey: "angkatan_id",
-  as: "angkatandosenWali",
 });
 db.dosenWali.belongsTo(db.angkatan, {
   foreignKey: "angkatan_id",
-  as: "angkatandosenWali",
 });
 
 //dosenwali dan kelas
 db.kelas.hasOne(db.dosenWali, {
   foreignKey: "kelas_id",
-  as: "kelasdosenwali",
 });
 db.dosenWali.belongsTo(db.kelas, {
   foreignKey: "kelas_id",
-  as: "kelasdosenwali",
 });
 
 //dosenwali dan prodi
 db.prodi.hasOne(db.dosenWali, {
   foreignKey: "prodi_id",
-  as: "prodidosenwali",
 });
 db.dosenWali.belongsTo(db.prodi, {
   foreignKey: "prodi_id",
-  as: "prodidosenwali",
+});
+
+/* 
+  ========================================
+  Relation Detail Matakuliah
+  ========================================
+*/
+
+//detail matkul dan prodi
+db.prodi.hasOne(db.detailMatkul, {
+  foreignKey: "prodi_id",
+});
+db.detailMatkul.belongsTo(db.prodi, {
+  foreignKey: "prodi_id",
+});
+
+//detail matkul dan matkul
+db.matakuliah.hasOne(db.detailMatkul, {
+  foreignKey: "matkul_id",
+});
+db.detailMatkul.belongsTo(db.matakuliah, {
+  foreignKey: "matkul_id",
+});
+
+/* 
+  ========================================
+  Relation Jadwal Matkul
+  ========================================
+*/
+
+//jadwal dan semester
+db.semester.hasOne(db.jadwal, {
+  foreignKey: "semester_id",
+});
+db.jadwal.belongsTo(db.semester, {
+  foreignKey: "semester_id",
+});
+
+//Jadwal matkul dan matkul
+db.detailMatkul.hasOne(db.jadwal, {
+  foreignKey: "detailMatkul_id",
+});
+db.jadwal.belongsTo(db.detailMatkul, {
+  foreignKey: "detailMatkul_id",
+});
+
+//Jadwal matkul dan kelas
+db.kelas.hasOne(db.jadwal, {
+  foreignKey: "kelas_id",
+});
+db.jadwal.belongsTo(db.kelas, {
+  foreignKey: "kelas_id",
+});
+
+/* 
+  ========================================
+  Relation Dosen dan Mata Kuliah
+  ========================================
+*/
+
+db.dosen.belongsToMany(db.jadwal, { through: "mengajar" });
+db.jadwal.belongsToMany(db.dosen, { through: "mengajar" });
+
+/* 
+  ========================================
+  Relation Mahasiswa dan Mata Kuliah
+  ========================================
+*/
+db.mahasiswa.belongsToMany(db.jadwal, { through: "mengikuti" });
+db.jadwal.belongsToMany(db.mahasiswa, { through: "mengikuti" });
+
+/* 
+  ========================================
+  Relation perizinan
+  ========================================
+*/
+//detail perizinan dan mahasiswa
+db.mahasiswa.hasOne(db.perizinan, {
+  foreignKey: "nim",
+});
+db.perizinan.belongsTo(db.mahasiswa, {
+  foreignKey: "nim",
+});
+
+/* 
+  ========================================
+  Relation Detail perizinan
+  ========================================
+*/
+//detail perizinan dan mahasiswa
+db.perizinan.hasOne(db.detailPerizinan, {
+  foreignKey: "nim",
+});
+db.detailPerizinan.belongsTo(db.perizinan, {
+  foreignKey: "nim",
+});
+
+//detail perizinan dan detail matkul
+db.detailMatkul.hasOne(db.detailPerizinan, {
+  foreignKey: "nim",
+});
+db.detailPerizinan.belongsTo(db.detailMatkul, {
+  foreignKey: "nim",
 });
 
 db.ROLES = ["admin", "mahasiswa", "dosenWali"];
