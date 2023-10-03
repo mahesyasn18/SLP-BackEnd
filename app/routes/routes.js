@@ -4,26 +4,15 @@ const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
 
-module.exports = app => {
-    app.use(function(req, res, next) {
-        res.header(
-          "Access-Control-Allow-Headers",
-          "Origin, Content-Type, Accept"
-        );
-        next();
-      });
+module.exports = (app) => {
+  app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
+    next();
+  });
 
-  app.get(
-    "/api/test/user",
-    [authJwt.verifyToken],
-    controller.userBoard
-  );
+  app.get("/api/test/user", [authJwt.verifyToken], controller.userBoard);
 
-  app.get(
-    'api/admins',
-    [authJwt.verifyToken, authJwt.isAdmin],
-    admin.findAll
-  );
+  app.get("api/admins", [authJwt.verifyToken, authJwt.isAdmin], admin.findAll);
 
   app.get(
     "/api/test/admin",
@@ -47,5 +36,23 @@ module.exports = app => {
     "/api/admins/mahasiswa/create",
     [authJwt.verifyToken, authJwt.isAdmin],
     mahasiswa.create
+  );
+
+  app.put(
+    "/api/admins/mahasiswa/update/:nim",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    mahasiswa.update
+  );
+
+  app.delete(
+    "/api/admins/mahasiswa/destroy/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    mahasiswa.delete
+  );
+
+  app.get(
+    "/api/admins/mahasiswa/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    mahasiswa.findOne
   );
 };
