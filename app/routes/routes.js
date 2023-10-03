@@ -33,7 +33,7 @@ module.exports = (app) => {
   );
 
   app.post(
-    "/api/admins/mahasiswa/create",
+    "/api/admins/mahasiswa/created",
     [authJwt.verifyToken, authJwt.isAdmin],
     mahasiswa.create
   );

@@ -7,7 +7,7 @@ const app = express();
 
 //for react
 var corsOptions = {
-    origin: "http://localhost:3000"
+  origin: "http://localhost:3000",
 };
 
 app.use(cors(corsOptions));
@@ -23,23 +23,21 @@ app.use(
 
 //for db
 const db = require("./app/models");
-const seeders = require("./app/seeders");
-db.sequelize.sync({force: true}).then(() => {
-  console.log('Drop and Resync Db');
-  seeders.initialRole();
-  seeders.initialAdmin();
-  seeders.initialKelas();
-  seeders.initialProdi();
-});
-
-
+// const seeders = require("./app/seeders");
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and Resync Db");
+//   seeders.initialRole();
+//   seeders.initialAdmin();
+//   seeders.initialKelas();
+//   seeders.initialProdi();
+// });
+db.sequelize.sync();
 
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to SLP Application" });
+  res.json({ message: "Welcome To SLP apps" });
 });
 
-
-require('./app/routes/auth.routes')(app);
+require("./app/routes/auth.routes")(app);
 require("./app/routes/routes")(app);
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {

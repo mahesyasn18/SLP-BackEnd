@@ -82,10 +82,10 @@ exports.findAll = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  const id = req.params.id;
+  const id = req.params.nim;
 
   Mahasiswa.update(req.body, {
-    where: { id: id },
+    where: { nim: id },
   })
     .then((num) => {
       if (num == 1) {
