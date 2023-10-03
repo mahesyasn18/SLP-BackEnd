@@ -11,6 +11,11 @@ function initialRole() {
       id: 2,
       name: "mahasiswa"
     });
+
+    Role.create({
+      id: 3,
+      name: "dosen_wali"
+    });
 }
 
 module.exports = initialRole;

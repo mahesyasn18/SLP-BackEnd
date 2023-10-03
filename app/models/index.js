@@ -23,6 +23,7 @@ db.role = require("./role_migration.js")(sequelize, Sequelize);
 db.kelas = require("./kelas_migration.js")(sequelize, Sequelize);
 db.prodi = require("./prodi_migration.js")(sequelize, Sequelize);
 db.mahasiswa = require("./mahasiswa_migration.js")(sequelize, Sequelize);
+db.dosen = require("./dosen_migration.js")(sequelize, Sequelize);
 
 
 //admin dan role
@@ -35,11 +36,21 @@ db.admin.belongsTo(db.role);
 // Mahasiswa and Role relationship
 db.role.hasOne(db.mahasiswa, {
   foreignKey: 'roleId', 
-  as: 'role' 
+  as: 'mahasiswaRole' 
 });
 db.mahasiswa.belongsTo(db.role, {
   foreignKey: 'roleId',
-  as: 'role'
+  as: 'mahasiswaRole'
+});
+
+// Dosen and Role relationship
+db.role.hasOne(db.dosen, {
+  foreignKey: 'roleId', 
+  as: 'dosenRole' 
+});
+db.dosen.belongsTo(db.role, {
+  foreignKey: 'roleId',
+  as: 'dosenRole'
 });
 
 // Mahasiswa and Prodi relationship
@@ -63,5 +74,5 @@ db.mahasiswa.belongsTo(db.kelas, {
 });
 
 
-db.ROLES = ["admin", "mahasiswa"];
+db.ROLES = ["admin", "mahasiswa", "dosen"];
 module.exports = db;
