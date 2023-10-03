@@ -34,12 +34,17 @@ exports.create = (req, res) => {
     return;
   } else if (!req.body.prodiId) {
     res.status(400).send({
-      message: "prodiId cannot be empty!",
+      message: "prodi cannot be empty!",
     });
     return;
   } else if (!req.body.kelasId) {
     res.status(400).send({
-      message: "kelasId cannot be empty!",
+      message: "kelas cannot be empty!",
+    });
+    return;
+  } else if (!req.body.angkatanId) {
+    res.status(400).send({
+      message: "Angkatan cannot be empty!",
     });
     return;
   }
@@ -55,6 +60,7 @@ exports.create = (req, res) => {
     roleId: 2,
     prodiId: req.body.prodiId,
     kelasId: req.body.kelasId,
+    angkatan: req.body.angkatanId,
   };
 
   Mahasiswa.create(mahasiswa)

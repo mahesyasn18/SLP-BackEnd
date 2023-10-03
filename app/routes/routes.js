@@ -15,6 +15,12 @@ module.exports = (app) => {
 
   app.get("api/admins", [authJwt.verifyToken, authJwt.isAdmin], admin.findAll);
 
+  /* 
+  ========================================
+  Routes Admins
+  ========================================
+*/
+
   app.get(
     "/api/test/admin",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -39,7 +45,6 @@ module.exports = (app) => {
     mahasiswa.create
   );
 
-
   app.put(
     "/api/admins/mahasiswa/update/:nim",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -57,7 +62,6 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     mahasiswa.findOne
   );
-
 
   app.get(
     "/api/admins/dosen",
