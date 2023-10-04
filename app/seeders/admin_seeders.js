@@ -1,14 +1,13 @@
 const db = require(".././models");
 const Admin = db.admin;
 
-function initialAdmin() {
+function intialAdmin() {
   Admin.create({
     id: 1,
-    nama: "Admin-01",
+    nama: "Admin 01",
     username: "admin",
     password: "admin",
     role_id: 1,
   });
 }
-
-module.exports = initialAdmin;
+module.exports = intialAdmin;

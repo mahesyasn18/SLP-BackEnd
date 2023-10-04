@@ -93,7 +93,6 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen.findOne
   );
-
   app.get(
     "/api/admins/dosen_wali",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -122,5 +121,29 @@ module.exports = (app) => {
     "/api/admins/dosen_wali/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen_wali.findOne
+  );
+
+  app.get(
+    "/api/admins/perizinan",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.findAll
+  );
+
+  app.put(
+    "/api/admins/perizinan/update/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.update
+  );
+
+  app.post(
+    "/api/admins/perizinan/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.create
+  );
+
+  app.delete(
+    "/api/admins/perizinan/destroy/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.delete
   );
 };
