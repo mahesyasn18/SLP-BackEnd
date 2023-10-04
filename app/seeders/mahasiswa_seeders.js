@@ -10,9 +10,9 @@ function initialMahasiswa() {
     role_id: 2,
     no_telp: "087802351311",
     no_telp_orang_tua: "087802351311",
-    prodiId: 1,
-    kelasId: 2,
-    angkatan: 3,
+    prodi_id: 1,
+    kelas_id: 2,
+    angkatan_id: 3,
   });
 }
 module.exports = initialMahasiswa;
