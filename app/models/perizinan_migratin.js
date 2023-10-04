@@ -8,9 +8,6 @@ module.exports = (sequelize, Sequelize) => {
     nama_perizinan: {
       type: DataTypes.STRING,
     },
-    alasan: {
-      type: DataTypes.STRING,
-    },
     surat: {
       type: DataTypes.TEXT,
     },

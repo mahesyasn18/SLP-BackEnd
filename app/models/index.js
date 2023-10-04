@@ -223,18 +223,18 @@ db.perizinan.belongsTo(db.mahasiswa, {
 */
 //detail perizinan dan mahasiswa
 db.perizinan.hasOne(db.detailPerizinan, {
-  foreignKey: "nim",
+  foreignKey: "perizinan_id",
 });
 db.detailPerizinan.belongsTo(db.perizinan, {
-  foreignKey: "nim",
+  foreignKey: "perizinan_id",
 });
 
 //detail perizinan dan detail matkul
 db.detailMatkul.hasOne(db.detailPerizinan, {
-  foreignKey: "nim",
+  foreignKey: "id_detail_matkul",
 });
 db.detailPerizinan.belongsTo(db.detailMatkul, {
-  foreignKey: "nim",
+  foreignKey: "id_detail_matkul",
 });
 
 db.ROLES = ["admin", "mahasiswa", "dosenWali"];
