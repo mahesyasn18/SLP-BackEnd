@@ -4,6 +4,9 @@ const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
 const dosen = require("../controllers/dosen_controller");
+const dosen_wali = require("../controllers/dosen_wali_controller")
+const perizinan= require("../controllers/perizinan_controller");
+const semester= require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
 
@@ -96,6 +99,30 @@ module.exports = (app) => {
   );
 
   app.get(
+    "/api/admins/dosen_wali",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.findAll
+  );
+
+  app.put(
+    "/api/admins/dosen_wali/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.update
+  );
+
+  app.post(
+    "/api/admins/dosen_wali/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.create
+  );
+
+  app.get(
+    "/api/admins/dosen_wali/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.findOne
+  );
+
+  app.get(
     "/api/admins/angkatan",
     [authJwt.verifyToken, authJwt.isAdmin],
     angkatan.findAll
@@ -106,4 +133,53 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     prodi.findAll
   );
+
+  app.get(
+    "/api/admins/perizinan",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.findAll
+  );
+
+  app.put(
+    "/api/admins/perizinan/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.update
+  );
+
+  app.post(
+    "/api/admins/perizinan/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.create
+  );
+
+  app.get(
+    "/api/admins/perizinan/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.findOne
+  );
+
+  app.get(
+    "/api/admins/semester",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.findAll
+  );
+
+  app.put(
+    "/api/admins/semesteer/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.update
+  );
+
+  app.post(
+    "/api/admins/semester/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.create
+  );
+
+  app.get(
+    "/api/admins/semester/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.findOne
+  );
+
 };
