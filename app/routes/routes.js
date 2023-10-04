@@ -72,7 +72,7 @@ module.exports = (app) => {
   );
 
   app.put(
-    "/api/admins/dosen/:id",
+    "/api/admins/dosen/update/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen.update
   );
