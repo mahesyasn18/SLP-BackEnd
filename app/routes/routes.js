@@ -93,3 +93,34 @@ module.exports = (app) => {
     dosen.findOne
   );
 };
+
+app.get(
+  "/api/admins/dosen_wali",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  dosen_wali.findAll
+);
+
+app.put(
+  "/api/admins/dosen_wali/update/:id",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  dosen_wali.update
+);
+
+app.post(
+  "/api/admins/dosen_wali/created",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  dosen_wali.create
+);
+
+app.delete(
+  "/api/admins/dosen_wali/destroy/:id",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  dosen_wali.delete
+);
+
+app.get(
+  "/api/admins/dosen_wali/:id",
+  [authJwt.verifyToken, authJwt.isAdmin],
+  dosen_wali.findOne
+);
+};
