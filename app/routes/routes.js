@@ -4,6 +4,7 @@ const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
 const dosen = require("../controllers/dosen_controller");
+const dosen_wali = require("../controllers/dosen_wali_controller")
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
 
@@ -93,6 +94,30 @@ module.exports = (app) => {
     "/api/admins/dosen/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen.findOne
+  );
+
+  app.get(
+    "/api/admins/dosen_wali",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.findAll
+  );
+
+  app.put(
+    "/api/admins/dosen_wali/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.update
+  );
+
+  app.post(
+    "/api/admins/dosen_wali/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.create
+  );
+
+  app.get(
+    "/api/admins/dosen_wali/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.findOne
   );
 
   app.get(
