@@ -5,6 +5,8 @@ const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
 const dosen = require("../controllers/dosen_controller");
 const dosen_wali = require("../controllers/dosen_wali_controller");
+const perizinan= require("../controllers/perizinan_controller");
+const semester  = require("../models/semester_migration");
 
 module.exports = (app) => {
   app.use(function (req, res, next) {
