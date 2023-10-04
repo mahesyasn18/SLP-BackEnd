@@ -2,53 +2,6 @@ const db = require("../models");
 const Mahasiswa = db.mahasiswa;
 
 exports.create = (req, res) => {
-  if (!req.body.nim) {
-    res.status(400).send({
-      message: "nim cannot be empty!",
-    });
-    return;
-  } else if (!req.body.nama) {
-    res.status(400).send({
-      message: "nama cannot be empty!",
-    });
-    return;
-  } else if (!req.body.username) {
-    res.status(400).send({
-      message: "username cannot be empty!",
-    });
-    return;
-  } else if (!req.body.password) {
-    res.status(400).send({
-      message: "password cannot be empty!",
-    });
-    return;
-  } else if (!req.body.no_telp) {
-    res.status(400).send({
-      message: "no_telp cannot be empty!",
-    });
-    return;
-  } else if (!req.body.no_telp_orang_tua) {
-    res.status(400).send({
-      message: "no_telp_orang_tua cannot be empty!",
-    });
-    return;
-  } else if (!req.body.prodiId) {
-    res.status(400).send({
-      message: "prodi cannot be empty!",
-    });
-    return;
-  } else if (!req.body.kelasId) {
-    res.status(400).send({
-      message: "kelas cannot be empty!",
-    });
-    return;
-  } else if (!req.body.angkatanId) {
-    res.status(400).send({
-      message: "Angkatan cannot be empty!",
-    });
-    return;
-  }
-
   // Create an mahasiswa
   const mahasiswa = {
     nim: req.body.nim,
@@ -57,10 +10,10 @@ exports.create = (req, res) => {
     password: req.body.password,
     no_telp: req.body.no_telp,
     no_telp_orang_tua: req.body.no_telp_orang_tua,
-    roleId: 2,
-    prodiId: req.body.prodiId,
-    kelasId: req.body.kelasId,
-    angkatan: req.body.angkatanId,
+    role_id: 2,
+    prodi_id: req.body.prodi_id,
+    kelas_id: req.body.kelas_id,
+    angkatan_id: req.body.angkatan_id,
   };
 
   Mahasiswa.create(mahasiswa)
@@ -76,7 +29,9 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  Mahasiswa.findAll()
+  Mahasiswa.findAll({
+    include: [db.prodi, db.angkatan, db.kelas],
+  })
     .then((data) => {
       res.send(data);
     })

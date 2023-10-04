@@ -4,6 +4,8 @@ const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
 const dosen = require("../controllers/dosen_controller");
+const angkatan = require("../controllers/angkatan_controller");
+const prodi = require("../controllers/prodi_controller");
 
 module.exports = (app) => {
   app.use(function (req, res, next) {
@@ -40,7 +42,7 @@ module.exports = (app) => {
   );
 
   app.post(
-    "/api/admins/mahasiswa/created",
+    "/api/admins/mahasiswa/create",
     [authJwt.verifyToken, authJwt.isAdmin],
     mahasiswa.create
   );
@@ -91,5 +93,17 @@ module.exports = (app) => {
     "/api/admins/dosen/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen.findOne
+  );
+
+  app.get(
+    "/api/admins/angkatan",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    angkatan.findAll
+  );
+
+  app.get(
+    "/api/admins/prodi",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    prodi.findAll
   );
 };

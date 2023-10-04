@@ -33,6 +33,7 @@ db.sequelize.sync({ force: true }).then(() => {
   seeders.initialProdi();
   seeders.initialAngkatan();
   seeders.intialSemester();
+  seeders.initialMahasiswa();
 });
 // db.sequelize.sync({ force: true });
 // db.sequelize.sync();
