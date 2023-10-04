@@ -36,6 +36,7 @@ db.sequelize.sync({ force: true }).then(() => {
   seeders.initialMahasiswa();
   seeders.initialMataKuliah();
   seeders.initialDetailMataKuliah();
+  seeders.initialJadwal();
 });
 // db.sequelize.sync({ force: true });
 // db.sequelize.sync();
