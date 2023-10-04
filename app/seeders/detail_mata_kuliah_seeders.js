@@ -52,35 +52,35 @@ function initialDetailMataKuliah() {
         matkul_id: "21IF2013"
     });
     DetailMataKuliah.create({
-        id_detailMatkul: "7",
+        id_detailMatkul: "8",
         tipe: "Teori",
         sks: 2,
         prodi_id: 1,
         matkul_id: "21IF2014"
     });
     DetailMataKuliah.create({
-        id_detailMatkul: "8",
+        id_detailMatkul: "9",
         tipe: "Teori",
         sks: 2,
         prodi_id: 1,
         matkul_id: "21IF2015"
     });
     DetailMataKuliah.create({
-        id_detailMatkul: "9",
+        id_detailMatkul: "10",
         tipe: "Praktek",
         sks: 1,
         prodi_id: 1,
         matkul_id: "21IF2015"
     });
     DetailMataKuliah.create({
-        id_detailMatkul: "10",
+        id_detailMatkul: "11",
         tipe: "Teori",
         sks: 1,
         prodi_id: 1,
         matkul_id: "21IF2016"
     });
     DetailMataKuliah.create({
-        id_detailMatkul: "11",
+        id_detailMatkul: "12",
         tipe: "Praktek",
         sks: 2,
         prodi_id: 1,
