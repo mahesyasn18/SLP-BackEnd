@@ -146,4 +146,28 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     perizinan.delete
   );
+
+  app.get(
+    "/api/admins/semester",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.create
+  );
+
+  app.put(
+    "/api/admins/semester/update/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.update
+  );
+
+  app.post(
+    "/api/admins/semester/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.create
+  );
+
+  app.delete(
+    "/api/admins/semester/destroy/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.delete
+  );
 };
