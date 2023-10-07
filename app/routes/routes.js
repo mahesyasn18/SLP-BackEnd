@@ -4,9 +4,10 @@ const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
 const dosen = require("../controllers/dosen_controller");
-const dosen_wali = require("../controllers/dosen_wali_controller")
+const dosen_wali = require("../controllers/dosen_wali_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
+const jadwal = require("../controllers/jadwal_controller");
 
 module.exports = (app) => {
   app.use(function (req, res, next) {
@@ -73,7 +74,7 @@ module.exports = (app) => {
   );
 
   app.put(
-    "/api/admins/dosen/:id",
+    "/api/admins/dosen/update/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen.update
   );
@@ -130,5 +131,35 @@ module.exports = (app) => {
     "/api/admins/prodi",
     [authJwt.verifyToken, authJwt.isAdmin],
     prodi.findAll
+  );
+
+  app.get(
+    "/api/admins/jadwal",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    jadwal.findAll
+  );
+
+  app.put(
+    "/api/admins/jadwal/update/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    jadwal.update
+  );
+
+  app.post(
+    "/api/admins/jadwal/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    jadwal.create
+  );
+
+  app.delete(
+    "/api/admins/jadwal/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    jadwal.delete
+  );
+
+  app.get(
+    "/api/admins/jadwal/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    jadwal.findOne
   );
 };
