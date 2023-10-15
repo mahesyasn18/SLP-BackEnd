@@ -10,6 +10,13 @@ const semester = require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
 const jadwal = require("../controllers/jadwal_controller");
+const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
+const fileUpload = require("express-fileupload");
+
+const uploadOpts = {
+  useTempFiles: true,
+  tempFileDir: "/tmp/",
+};
 
 module.exports = (app) => {
   app.use(function (req, res, next) {
