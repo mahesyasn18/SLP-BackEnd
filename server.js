@@ -25,21 +25,21 @@ app.use(
 //for db
 const db = require("./app/models");
 const seeders = require("./app/seeders");
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and Resync Db");
-  seeders.initialRole();
-  seeders.initialAdmin();
-  seeders.initialKelas();
-  seeders.initialProdi();
-  seeders.initialAngkatan();
-  seeders.intialSemester();
-  seeders.initialMahasiswa();
-  seeders.initialMataKuliah();
-  seeders.initialDetailMataKuliah();
-  seeders.initialJadwal();
-});
+// db.sequelize.sync({ force: true }).then(() => {
+//   console.log("Drop and Resync Db");
+//   seeders.initialRole();
+//   seeders.initialAdmin();
+//   seeders.initialKelas();
+//   seeders.initialProdi();
+//   seeders.initialAngkatan();
+//   seeders.intialSemester();
+//   seeders.initialMahasiswa();
+//   seeders.initialMataKuliah();
+//   seeders.initialDetailMataKuliah();
+//   seeders.initialJadwal();
+// });
 // db.sequelize.sync({ force: true });
-// db.sequelize.sync();
+db.sequelize.sync();
 app.get("/", (req, res) => {
   res.json({ message: "Welcome To SLP apps" });
 });

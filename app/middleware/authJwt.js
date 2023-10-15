@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const config = require("../config/auth.config.js");
 const db = require("../models");
 const Admin = db.admin;
+const Mahasiswa = db.mahasiswa;
 
 verifyToken = (req, res, next) => {
   let token = req.session.token;
@@ -28,6 +29,7 @@ isAdmin = async (req, res, next) => {
         model: db.role,
       },
     });
+    console.log(req);
     if (!admin) {
       return res.status(404).send({
         message: "Admin not found",
@@ -47,9 +49,38 @@ isAdmin = async (req, res, next) => {
   }
 };
 
+isMahasiswa = async (req, res, next) => {
+  try {
+    const mahasiswa = await Mahasiswa.findByPk(req.userId, {
+      include: {
+        model: db.role,
+      },
+    });
+    console.log(req);
+
+    if (!mahasiswa) {
+      return res.status(404).send({
+        message: "Mahasiswa not found",
+      });
+    }
+    const userRole = mahasiswa.role;
+    if (userRole.name === "mahasiswa") {
+      return next();
+    }
+    return res.status(403).send({
+      message: "Require Mahasiswa Role!",
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Unable to validate Mahasiswa role!",
+    });
+  }
+};
+
 const authJwt = {
   verifyToken,
   isAdmin,
+  isMahasiswa,
 };
 
 module.exports = authJwt;
