@@ -9,6 +9,7 @@ const perizinan = require("../controllers/perizinan_controller");
 const semester = require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
+const jadwal = require("../controllers/jadwal_controller");
 
 module.exports = (app) => {
   app.use(function (req, res, next) {
@@ -168,6 +169,8 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     jadwal.findOne
   );
+
+  app.get(
     "/api/admins/perizinan",
     [authJwt.verifyToken, authJwt.isAdmin],
     perizinan.findAll
