@@ -4,19 +4,24 @@ const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
 const dosen = require("../controllers/dosen_controller");
-const dosen_wali = require("../controllers/dosen_wali_controller")
-const perizinan= require("../controllers/perizinan_controller");
-const semester= require("../controllers/semester_controller");
+const dosen_wali = require("../controllers/dosen_wali_controller");
+const perizinan = require("../controllers/perizinan_controller");
+const semester = require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
+const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
+const fileUpload = require("express-fileupload");
+
+const uploadOpts = {
+  useTempFiles: true,
+  tempFileDir: "/tmp/",
+};
 
 module.exports = (app) => {
   app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
     next();
   });
-
-  app.get("/api/test/user", [authJwt.verifyToken], controller.userBoard);
 
   app.get("api/admins", [authJwt.verifyToken, authJwt.isAdmin], admin.findAll);
 
@@ -111,6 +116,13 @@ module.exports = (app) => {
   );
 
   app.post(
+    "/api/admins/import/dosen",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    fileUpload(uploadOpts),
+    dosen.importExcel
+  );
+
+  app.post(
     "/api/admins/dosen_wali/create",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen_wali.create
@@ -182,4 +194,10 @@ module.exports = (app) => {
     semester.findOne
   );
 
+  //user
+  app.get(
+    "/api/test/mahasiswa",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    mahasiswa_roles.mahasiswaBoard
+  );
 };
