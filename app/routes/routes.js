@@ -31,11 +31,11 @@ module.exports = (app) => {
     controller.adminBoard
   );
 
-  app.get(
-    "/api/admins/kelas",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    kelas.findAll
-  );
+  /* 
+  ========================================
+  Routes Admins : Mahasiswa
+  ========================================
+*/
 
   app.get(
     "/api/admins/mahasiswa",
@@ -67,6 +67,12 @@ module.exports = (app) => {
     mahasiswa.findOne
   );
 
+  /* 
+  ========================================
+  Routes Admins : Dosen Pengampu
+  ========================================
+*/
+
   app.get(
     "/api/admins/dosen",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -97,6 +103,18 @@ module.exports = (app) => {
     dosen.findOne
   );
 
+  app.post(
+    "/api/admins/import/dosen",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    fileUpload(uploadOpts),
+    dosen.importExcel
+  );
+
+  /* 
+  ========================================
+  Routes Admins : Dosen Wali
+  ========================================
+*/
   app.get(
     "/api/admins/dosen_wali",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -110,13 +128,6 @@ module.exports = (app) => {
   );
 
   app.post(
-    "/api/admins/import/dosen",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    fileUpload(uploadOpts),
-    dosen.importExcel
-  );
-
-  app.post(
     "/api/admins/dosen_wali/create",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen_wali.create
@@ -126,6 +137,18 @@ module.exports = (app) => {
     "/api/admins/dosen_wali/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen_wali.findOne
+  );
+
+  /* 
+  ========================================
+  Routes Admins : Kelola Akademik
+  ========================================
+*/
+
+  app.get(
+    "/api/admins/kelas",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    kelas.findAll
   );
 
   app.get(
@@ -171,30 +194,6 @@ module.exports = (app) => {
   );
 
   app.get(
-    "/api/admins/perizinan",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.findAll
-  );
-
-  app.put(
-    "/api/admins/perizinan/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.update
-  );
-
-  app.post(
-    "/api/admins/perizinan/create",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.create
-  );
-
-  app.get(
-    "/api/admins/perizinan/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.findOne
-  );
-
-  app.get(
     "/api/admins/semester",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findAll
@@ -218,7 +217,36 @@ module.exports = (app) => {
     semester.findOne
   );
 
-  //user
+  app.get(
+    "/api/admins/perizinan",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.findAll
+  );
+
+  app.put(
+    "/api/admins/perizinan/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.update
+  );
+
+  app.post(
+    "/api/admins/perizinan/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.create
+  );
+
+  app.get(
+    "/api/admins/perizinan/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    perizinan.findOne
+  );
+
+  /* 
+  ========================================
+  Routes User
+  ========================================
+*/
+
   app.get(
     "/api/test/mahasiswa",
     [authJwt.verifyToken, authJwt.isMahasiswa],
