@@ -70,13 +70,10 @@ exports.importExcel = async (req, res) => {
     const failureData = [];
 
     for (let i = 0; i < data.length; i++) {
-      const { kode_dosen, nama_dosen, username, password, email } = data[i];
-      const passwordString = String(password);
+      const { kode_dosen, nama_dosen, email } = data[i];
       const dosen = {
         kode_dosen,
         nama_dosen,
-        username,
-        password: passwordString,
         email,
       };
 

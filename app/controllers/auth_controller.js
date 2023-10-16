@@ -3,6 +3,7 @@ const config = require("../config/auth.config");
 const Admin = db.admin;
 const Role = db.role;
 const Mahasiswa = db.mahasiswa;
+const DosenWali = db.dosenWali;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 
@@ -22,12 +23,22 @@ exports.signin = async (req, res) => {
       include: Role,
     });
 
+    const dosenWaliUser = await DosenWali.findOne({
+      where: {
+        username: req.body.username,
+      },
+      include: Role,
+    });
+
     let user = adminUser; // Default to Admin user
     let userType = "admin";
 
     if (!adminUser && mahasiswaUser) {
       user = mahasiswaUser;
       userType = "mahasiswa";
+    } else if (!adminUser && dosenWaliUser) {
+      user = dosenWaliUser;
+      userType = "dosen_wali";
     }
 
     if (!user) {
@@ -44,7 +55,7 @@ exports.signin = async (req, res) => {
     }
 
     const roleName = user.role ? user.role.name : "";
-    const id = user.id ?? user.nim;
+    const id = user.id ?? user.nim ?? user.id_dosenwali;
     const token = jwt.sign({ id: id, userType }, config.secret, {
       algorithm: "HS256",
       allowInsecureKeySizes: true,
