@@ -10,6 +10,7 @@ const semester = require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
 const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
+const detail_matkul = require("../controllers/detailMatkul_controller");
 const fileUpload = require("express-fileupload");
 
 const uploadOpts = {
@@ -177,7 +178,7 @@ module.exports = (app) => {
   );
 
   app.put(
-    "/api/admins/semesteer/:id",
+    "/api/admins/semester/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.update
   );
@@ -192,6 +193,12 @@ module.exports = (app) => {
     "/api/admins/semester/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findOne
+  );
+
+  app.get(
+    "/api/mahasiswa/detail_matkul",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    detail_matkul.findAll
   );
 
   //user

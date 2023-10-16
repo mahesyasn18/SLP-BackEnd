@@ -42,7 +42,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  DetailMatKul.findAll()
+  DetailMatKul.findAll({ include: [db.matakuliah] })
     .then((data) => {
       res.send(data);
     })

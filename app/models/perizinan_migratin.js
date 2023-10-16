@@ -5,9 +5,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING,
       primaryKey: true,
     },
-    nama_perizinan: {
-      type: DataTypes.STRING,
-    },
+
     surat: {
       type: DataTypes.TEXT,
     },
