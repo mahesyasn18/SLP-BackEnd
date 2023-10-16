@@ -9,6 +9,7 @@ const perizinan = require("../controllers/perizinan_controller");
 const semester = require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
+const jadwal = require("../controllers/jadwal_controller");
 const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
 const fileUpload = require("express-fileupload");
@@ -38,11 +39,11 @@ module.exports = (app) => {
     controller.adminBoard
   );
 
-  app.get(
-    "/api/admins/kelas",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    kelas.findAll
-  );
+  /* 
+  ========================================
+  Routes Admins : Mahasiswa
+  ========================================
+*/
 
   app.get(
     "/api/admins/mahasiswa",
@@ -74,6 +75,12 @@ module.exports = (app) => {
     mahasiswa.findOne
   );
 
+  /* 
+  ========================================
+  Routes Admins : Dosen Pengampu
+  ========================================
+*/
+
   app.get(
     "/api/admins/dosen",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -104,6 +111,18 @@ module.exports = (app) => {
     dosen.findOne
   );
 
+  app.post(
+    "/api/admins/import/dosen",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    fileUpload(uploadOpts),
+    dosen.importExcel
+  );
+
+  /* 
+  ========================================
+  Routes Admins : Dosen Wali
+  ========================================
+*/
   app.get(
     "/api/admins/dosen_wali",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -117,13 +136,6 @@ module.exports = (app) => {
   );
 
   app.post(
-    "/api/admins/import/dosen",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    fileUpload(uploadOpts),
-    dosen.importExcel
-  );
-
-  app.post(
     "/api/admins/dosen_wali/create",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen_wali.create
@@ -133,6 +145,18 @@ module.exports = (app) => {
     "/api/admins/dosen_wali/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     dosen_wali.findOne
+  );
+
+  /* 
+  ========================================
+  Routes Admins : Kelola Akademik
+  ========================================
+*/
+
+  app.get(
+    "/api/admins/kelas",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    kelas.findAll
   );
 
   app.get(
@@ -148,27 +172,33 @@ module.exports = (app) => {
   );
 
   app.get(
-    "/api/admins/perizinan",
+    "/api/admins/jadwal",
     [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.findAll
+    jadwal.findAll
   );
 
   app.put(
-    "/api/admins/perizinan/:id",
+    "/api/admins/jadwal/update/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.update
+    jadwal.update
   );
 
   app.post(
-    "/api/admins/perizinan/create",
+    "/api/admins/jadwal/create",
     [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.create
+    jadwal.create
+  );
+
+  app.delete(
+    "/api/admins/jadwal/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    jadwal.delete
   );
 
   app.get(
-    "/api/admins/perizinan/:id",
+    "/api/admins/jadwal/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
-    perizinan.findOne
+    jadwal.findOne
   );
 
   app.get(
