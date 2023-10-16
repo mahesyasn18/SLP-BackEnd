@@ -37,6 +37,8 @@ const seeders = require("./app/seeders");
 //   seeders.initialMataKuliah();
 //   seeders.initialDetailMataKuliah();
 //   seeders.initialJadwal();
+//   seeders.initialDosen();
+//   seeders.initialDosenWali();
 // });
 // db.sequelize.sync({ force: true });
 db.sequelize.sync();
