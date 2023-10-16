@@ -32,7 +32,7 @@ exports.create = (req,res)=>{
         .catch((err)=>{
             res.status(500).send({
                 message:
-                    err.message || "Some error occured while creating Perizinan",
+                    err.message || "Some error occured while creating Semester",
             })
         })
 };
@@ -58,11 +58,11 @@ exports.update = (req, res) => {
       .then((num) => {
         if (num == 1) {
           res.send({
-            message: "Perizinan was updated successfully.",
+            message: "Semester was updated successfully.",
           });
         } else {
           res.send({
-            message: `Cannot update Perizinan with id=${id}. Maybe Semester was not found or req.body is empty!`,
+            message: `Cannot update Semester with id=${id}. Maybe Semester was not found or req.body is empty!`,
           });
         }
       })
@@ -87,7 +87,7 @@ exports.update = (req, res) => {
           });
         } else {
           res.send({
-            message: `Cannot delete Perizinan with id=${id}. Maybe Semester was not found!`,
+            message: `Cannot delete Semester with id=${id}. Maybe Semester was not found!`,
           });
         }
       })

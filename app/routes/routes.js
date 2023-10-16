@@ -177,7 +177,7 @@ module.exports = (app) => {
   );
 
   app.put(
-    "/api/admins/semesteer/:id",
+    "/api/admins/semester/update/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.update
   );
@@ -192,6 +192,12 @@ module.exports = (app) => {
     "/api/admins/semester/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findOne
+  );
+
+  app.delete(
+    "/api/admins/semester/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.delete
   );
 
   //user
