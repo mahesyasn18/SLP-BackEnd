@@ -3,6 +3,7 @@ const config = require("../config/auth.config.js");
 const db = require("../models");
 const Admin = db.admin;
 const Mahasiswa = db.mahasiswa;
+const Dosenwali = db.dosenWali;
 
 verifyToken = (req, res, next) => {
   let token = req.session.token;
@@ -73,6 +74,34 @@ isMahasiswa = async (req, res, next) => {
   } catch (error) {
     return res.status(500).send({
       message: "Unable to validate Mahasiswa role!",
+    });
+  }
+};
+
+isDosenWali = async (req, res, next) => {
+  try {
+    const dosenwali = await Dosenwali.findByPk(req.userId, {
+      include: {
+        model: db.role,
+      },
+    });
+    console.log(req);
+
+    if (!dosenwali) {
+      return res.status(404).send({
+        message: "Dosen Wali not found",
+      });
+    }
+    const userRole = dosenwali.role;
+    if (userRole.name === "dosen_wali") {
+      return next();
+    }
+    return res.status(403).send({
+      message: "Require Dosen Wali Role!",
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Unable to validate Dosen Wali role!",
     });
   }
 };

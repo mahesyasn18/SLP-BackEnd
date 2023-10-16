@@ -7,7 +7,9 @@ const intialSemester = require("./semester_seeder");
 const initialMahasiswa = require("./mahasiswa_seeders");
 const initialMataKuliah = require("./mata_kuliah_seeders");
 const initialDetailMataKuliah = require("./detail_mata_kuliah_seeders");
-const initialJadwal= require("./jadwal_matkul_seeders");
+const initialJadwal = require("./jadwal_matkul_seeders");
+const initialDosen = require("./dosen_seeders");
+const initialDosenWali = require("./dosen_wali_seeders");
 
 module.exports = {
   initialRole,
@@ -19,5 +21,7 @@ module.exports = {
   initialMahasiswa,
   initialMataKuliah,
   initialDetailMataKuliah,
-  initialJadwal
+  initialJadwal,
+  initialDosen,
+  initialDosenWali,
 };
