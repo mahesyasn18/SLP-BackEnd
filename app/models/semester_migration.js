@@ -7,6 +7,9 @@ module.exports = (sequelize, Sequelize) => {
     nama_semester: {
       type: Sequelize.STRING,
     },
+    status_semester: {
+      type: Sequelize.STRING,
+    },
   });
 
   return Semester;

@@ -4,7 +4,8 @@ const Semester= db.semester;
 exports.create = (req,res)=>{
     const semester = {
         id_semester:req.body.id_semester,
-        nama_semester:req.body.nama_semester
+        nama_semester:req.body.nama_semester,
+        status_semester: req.body.status_semester
     }
 
     if(!req.body.id_semester){
@@ -17,7 +18,12 @@ exports.create = (req,res)=>{
             message:"nama_semester cannot be empty!"
         });
         return;
-    }
+    }else if(!req.body.status_semester){
+      res.status(400).send({
+          message:"status_semester cannot be empty!"
+      });
+      return;
+  }
 
     Semester.create(semester)
         .then((data)=>{
