@@ -1,91 +1,155 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
+const DetailMatKul = db.detailMatkul;
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/"); // The folder where uploaded files will be stored
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + "-" + file.originalname); // Rename the file to avoid conflicts
+  },
+});
+
+const upload = multer({ storage });
 
 exports.create = (req, res) => {
-  const perizinan = {
-    id_perizinan: req.body.id_perizinan,
-    nama_perizinan: req.body.nama_perizinan,
-    alasan: req.body.alasan,
-    surat: req.body.surat,
-    jenis: req.body.jenis,
-    status: req.body.status,
-    keterangan: req.body.keterangan,
-    tanggal_awal: req.body.tanggal_awal,
-    tanggal_akbir: req.body.tanggal_akhir,
-  };
-
-  if (!req.body.id_perizinan) {
-    res.status(400).send({
-      message: "id_Perizinan cannot be empty!",
-    });
-    return;
-  } else if (!req.body.nama_perizinan) {
-    res.status(400).send({
-      message: "nama_perizinan cannot be empty!",
-    });
-    return;
-  } else if (!req.body.alasan) {
-    res.status(400).send({
-      message: "alasan cannot be empty!",
-    });
-    return;
-  } else if (!req.body.surat) {
-    res.status(400).send({
-      message: "surat cannot be empty!",
-    });
-    return;
-  } else if (!req.body.jenis) {
-    res.status(400).send({
-      message: "jenis cannot be empty!",
-    });
-    return;
-  } else if (!req.body.status) {
-    res.status(400).send({
-      status: "surat cannot be empty!",
-    });
-    return;
-  } else if (!req.body.keterangan) {
-    res.status(400).send({
-      message: "keterangan cannot be empty!",
-    });
-    return;
-  } else if (!req.body.tanggal_awal) {
-    res.status(400).send({
-      message: "tanggal_awal cannot be empty!",
-    });
-    return;
-  } else if (!req.body.tanggal_akhir) {
-    res.status(400).send({
-      message: "tanggal_akhir cannot be empty!",
-    });
-    return;
-  }
-
-  Perizinan.create(perizinan)
-    .then((createdPerizinan) => {
-      const perizinanId = createdPerizinan.id;
-      const detailPerizinan = {
-        jumlah_jam: req.body.jumlah_jam, // Isi jumlah_jam sesuai dengan data yang diterima dari permintaan
-        perizinan_id: perizinanId,
-        id_detail_matkul: req.body.id,
-      };
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Some error occured while creating Perizinan",
+  upload.single("file")(req, res, (err) => {
+    if (err) {
+      return res.status(500).send({
+        message: "File upload failed: " + err.message,
       });
+    }
+
+    const filePath = path.join(req.file.filename);
+    console.log(req.body);
+    const random4DigitNumber = Math.floor(1000 + Math.random() * 9000);
+    const idss = req.body.nim + random4DigitNumber;
+    let jml_jam = 0;
+    const matkulData = req.body.matakuliah;
+    console.log(matkulData);
+
+    if (!matkulData || matkulData.length === 0) {
+      return res.status(400).send({
+        message: "At least one course must be selected.",
+      });
+    }
+
+    // Pisahkan ID menjadi array menggunakan koma sebagai pemisah
+    const matkulIDs = matkulData.split(",");
+    // Inisialisasi array untuk menyimpan hasil
+    let promises = [];
+
+    // Loop melalui setiap ID
+    matkulIDs.forEach((id) => {
+      const promise = DetailMatKul.findAll({
+        where: {
+          id_detailMatkul: id,
+        },
+      });
+      promises.push(promise);
     });
+
+    // Gunakan Promise.all untuk menunggu semua promise selesai
+    Promise.all(promises)
+      .then((results) => {
+        const flattenedResults = [].concat(...results); // Flatten the array of arrays
+        const sks = flattenedResults.map((result) => result.dataValues.sks);
+        const tipe = flattenedResults.map((result) => result.dataValues.tipe);
+
+        console.log("sks:", sks);
+        console.log("tipe:", tipe);
+
+        const perizinanDetails = []; // Inisialisasi array untuk menyimpan data perizinanDetail
+
+        for (let i = 0; i < matkulIDs.length; i++) {
+          const id_detail_matkul = matkulIDs[i];
+          const sksValue = sks[i];
+          const tipeValue = tipe[i];
+
+          let jml_jam;
+
+          if (tipeValue === "Teori") {
+            jml_jam = parseInt(sksValue);
+          } else {
+            jml_jam = parseInt(sksValue) * 3;
+          }
+
+          const perizinanDetail = {
+            jumlah_jam: jml_jam,
+            perizinan_id: idss,
+            id_detail_matkul: id_detail_matkul,
+          };
+
+          perizinanDetails.push(perizinanDetail);
+        }
+        const perizinan = {
+          id_perizinan: idss,
+          surat: filePath,
+          jenis: req.body.jenis,
+          status: req.body.status,
+          keterangan: req.body.keterangan,
+          tanggal_awal: req.body.tanggal_awal,
+          tanggal_akhir: req.body.tanggal_akhir,
+          nim: req.body.nim,
+          detailPerizinan: [perizinanDetails], // Remove square brackets here
+        };
+        if (!perizinan.id_perizinan) {
+          res.status(400).send({
+            message: "id_Perizinan cannot be empty!",
+          });
+        } else if (!perizinan.surat) {
+          res.status(400).send({
+            message: "surat cannot be empty!",
+          });
+        } else if (!perizinan.jenis) {
+          res.status(400).send({
+            message: "jenis cannot be empty!",
+          });
+        } else if (!perizinan.status) {
+          res.status(400).send({
+            message: "status cannot be empty!",
+          });
+        } else if (!perizinan.keterangan) {
+          res.status(400).send({
+            message: "keterangan cannot be empty!",
+          });
+        } else if (!perizinan.tanggal_awal) {
+          res.status(400).send({
+            message: "tanggal_awal cannot be empty!",
+          });
+        } else if (!perizinan.tanggal_akhir) {
+          res.status(400).send({
+            message: "tanggal_akhir cannot be empty!",
+          });
+        }
+        Perizinan.create(perizinan, { include: ["detailPerizinan"] })
+          .then((data) => {
+            res.send(data);
+          })
+          .catch((err) => {
+            res.status(500).send({
+              message:
+                err.message || "Some error occurred while creating the Admin.",
+            });
+          });
+      })
+      .catch((err) => {
+        console.error("Error:", err);
+      });
+  });
 };
 
 exports.findAll = (req, res) => {
-  Perizinan.findAll()
+  Perizinan.findAll({ include: [db.detailPerizinan, db.mahasiswa] })
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Perizinan.",
+        message: err.message || "Some error occurred while retrieving Kelas.",
       });
     });
 };

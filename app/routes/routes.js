@@ -13,7 +13,8 @@ const jadwal = require("../controllers/jadwal_controller");
 const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
 const fileUpload = require("express-fileupload");
-
+const express = require("express");
+const path = require("path");
 const uploadOpts = {
   useTempFiles: true,
   tempFileDir: "/tmp/",
@@ -237,4 +238,27 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isMahasiswa],
     mahasiswa_roles.mahasiswaBoard
   );
+  app.post(
+    "/api/mahasiswa/perizinan",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.create
+  );
+
+  app.get(
+    "/api/mahasiswa/perizinan",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.findAll
+  );
+
+  app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(
+      "D:/study/Polban/Semester3/7. Proyek 3/SLP-BackEnd/",
+      "uploads",
+      filename
+    );
+
+    // Mengirimkan file surat kepada pengguna
+    res.sendFile(filePath);
+  });
 };
