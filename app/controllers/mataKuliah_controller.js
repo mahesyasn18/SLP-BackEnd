@@ -2,19 +2,13 @@ const db = require("../models");
 const Matkul = db.matakuliah;
 
 exports.create = (req, res) => {
-  if (!req.body.tipe) {
+  if (!req.body.nama_matakuliah) {
     res.status(400).send({
-      message: "tipe mata kuliah cannot be empty!",
+      message: "nama mata kuliah cannot be empty!",
     });
     return;
   }
-  if (!req.body.sks) {
-    res.status(400).send({
-      message: "sks cannot be empty!",
-    });
-    return;
-  }
-  if (!req.body.id_Matkul) {
+  if (!req.body.id_matakuliah) {
     res.status(400).send({
       message: "Id cannot be empty!",
     });
@@ -22,12 +16,12 @@ exports.create = (req, res) => {
   }
 
   // Create an admin
-  const Matkul = {
-    id_Matkul: req.body.id_Matkul,
-    nama_Matkul: req.body.nama_Matkul,
+  const matkul = {
+    id_matakuliah: req.body.id_matakuliah,
+    nama_matakuliah: req.body.nama_matakuliah,
   };
 
-  Matkul.create(Matkul)
+  Matkul.create(matkul)
     .then((data) => {
       res.send(data);
     })
@@ -52,10 +46,10 @@ exports.findAll = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  const id = req.params.id_Matkul;
+  const id = req.params.id;
 
   Matkul.update(req.body, {
-    where: { id_Matkul: id },
+    where: { id_matakuliah: id },
   })
     .then((num) => {
       if (num == 1) {
@@ -76,31 +70,31 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  const id = req.params.id_Matkul;
+  const id = req.params.id;
 
   Matkul.destroy({
-    where: { id_Matkul: id },
+    where: { id_matakuliah: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: " Matkul was deleted successfully!",
+          message: "Mata Kuliah was deleted successfully!",
         });
       } else {
         res.send({
-          message: `Cannot delete  Matkul with id=${id}. Maybe  Matkul was not found!`,
+          message: `Cannot delete Dosen with id=${id}. Maybe Mata kuliah was not found!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Could not  Matkul with id Mata kuliah=" + id,
+        message: "Could not delete Mata Kuliah with id=" + id,
       });
     });
 };
 
 exports.findOne = (req, res) => {
-  const id = req.params.id_Matkul;
+  const id = req.params.id;
 
   Matkul.findByPk(id)
     .then((data) => {

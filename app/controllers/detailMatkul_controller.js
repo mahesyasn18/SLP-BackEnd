@@ -59,7 +59,7 @@ exports.findAll = (req, res) => {
 };
 
 exports.update = (req, res) => {
-  const id = req.params.id_detailMatkul;
+  const id = req.params.id;
 
   DetailMatKul.update(req.body, {
     where: { id_detailMatkul: id },
@@ -83,7 +83,7 @@ exports.update = (req, res) => {
 };
 
 exports.delete = (req, res) => {
-  const id = req.params.id_detailMatkul;
+  const id = req.params.id;
 
   DetailMatKul.destroy({
     where: { id_detailMatkul: id },
@@ -91,23 +91,23 @@ exports.delete = (req, res) => {
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "detail Matkul was deleted successfully!",
+          message: "Detail Mata Kuliah was deleted successfully!",
         });
       } else {
         res.send({
-          message: `Cannot delete detail Matkul with id=${id}. Maybe detail Matkul was not found!`,
+          message: `Cannot delete Dosen with id=${id}. Detail Maybe Mata kuliah was not found!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Could not detail Matkul with id Mata kuliah=" + id,
+        message: "Could not delete Detail Mata Kuliah with id=" + id,
       });
     });
 };
 
 exports.findOne = (req, res) => {
-  const id = req.params.id_detailMatkul;
+  const id = req.params.id;
 
   DetailMatKul.findByPk(id)
     .then((data) => {
@@ -122,6 +122,21 @@ exports.findOne = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: "Error retrieving Detail Matkul with id=" + id,
+      });
+    });
+};
+
+exports.findID = (req, res) => {
+  DetailMatKul.findAll({
+    attributes: ["id_detailMatkul"], // Hanya ambil kolom id_detailMatkul
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving detail Matkul.",
       });
     });
 };

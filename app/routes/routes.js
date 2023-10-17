@@ -232,6 +232,18 @@ module.exports = (app) => {
     detail_matkul.findAll
   );
 
+  app.get(
+    "/api/admins/detailMatkul/id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.findID
+  );
+
+  app.delete(
+    "/api/admins/detailMatkul/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.delete
+  );
+
   app.put(
     "/api/admins/detailMatkul/update/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -272,6 +284,12 @@ module.exports = (app) => {
     "/api/admins/matkul/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     matkul.findOne
+  );
+
+  app.delete(
+    "/api/admins/matkul/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    matkul.delete
   );
 
   /* 
