@@ -1,3 +1,4 @@
+const { angkatan } = require("../models");
 const db = require("../models");
 const Mahasiswa = db.mahasiswa;
 
@@ -26,6 +27,61 @@ exports.create = (req, res) => {
           err.message || "Some error occurred while creating the Mahasiswa.",
       });
     });
+};
+
+exports.importExcel = async (req, res) => {
+  try {
+    const { excel } = req.files;
+    if (
+      excel.mimetype !==
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ) {
+      fs.unlinkSync(excel.tempFilePath);
+      return res.status(400).json({ msg: "File is invalid" });
+    }
+
+    const workbook = XLSX.readFile(excel.tempFilePath);
+    const sheetName = workbook.SheetNames[0];
+    const data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+
+    const successData = [];
+    const failureData = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const { nim, nama, username, password, no_telp, no_telp_orang_tua, role_id,prodi_id,kelas_id,angkatan_id } = data[i];
+      const mahasiswa = {
+
+        nim,
+        nama,
+        username,
+        password,
+        no_telp,
+        no_telp_orang_tua,
+        role_id,
+        prodi_id,
+        kelas_id,
+        angkatan_id,
+
+      };
+
+      try {
+        const createdMahasiswa = await Mahasiswa.create(mahasiswa);
+        successData.push(createdMahasiswa);
+      } catch (error) {
+        failureData.push({ ...mahasiswa, error: error.message });
+      }
+    }
+
+    fs.unlinkSync(excel.tempFilePath);
+
+    res.status(200).json({
+      success: successData,
+      failure: failureData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "An error occurred" });
+  }
 };
 
 exports.findAll = (req, res) => {

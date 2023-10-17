@@ -12,6 +12,7 @@ const prodi = require("../controllers/prodi_controller");
 const jadwal = require("../controllers/jadwal_controller");
 const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
+const matkul = require("../controllers/mataKuliah_controller");
 const fileUpload = require("express-fileupload");
 const express = require("express");
 const path = require("path");
@@ -74,6 +75,13 @@ module.exports = (app) => {
     "/api/admins/mahasiswa/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     mahasiswa.findOne
+  );
+
+  app.post(
+    "/api/admins/import/mahasiswa",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    fileUpload(uploadOpts),
+    mahasiswa.importExcel
   );
 
   /* 
@@ -227,12 +235,76 @@ module.exports = (app) => {
   );
 
   app.get(
-    "/api/mahasiswa/detail_matkul",
-    [authJwt.verifyToken, authJwt.isMahasiswa],
+    "/api/admins/detailMatkul",
+    [authJwt.verifyToken, authJwt.isAdmin],
     detail_matkul.findAll
   );
 
-  //user
+  app.get(
+    "/api/admins/detailMatkul/id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.findID
+  );
+
+  app.delete(
+    "/api/admins/detailMatkul/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.delete
+  );
+
+  app.put(
+    "/api/admins/detailMatkul/update/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.update
+  );
+
+  app.post(
+    "/api/admins/detailMatkul/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.create
+  );
+
+  app.get(
+    "/api/admins/detailMatkul/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.findOne
+  );
+
+  app.get(
+    "/api/admins/matkul",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    matkul.findAll
+  );
+
+  app.put(
+    "/api/admins/matkul/update/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    matkul.update
+  );
+
+  app.post(
+    "/api/admins/matkul/create",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    matkul.create
+  );
+
+  app.get(
+    "/api/admins/matkul/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    matkul.findOne
+  );
+
+  app.delete(
+    "/api/admins/matkul/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    matkul.delete
+  );
+
+  /* 
+  ========================================
+  Routes User
+  ========================================
+*/
   app.get(
     "/api/test/mahasiswa",
     [authJwt.verifyToken, authJwt.isMahasiswa],
