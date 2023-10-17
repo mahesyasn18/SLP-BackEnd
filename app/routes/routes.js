@@ -78,6 +78,13 @@ module.exports = (app) => {
     mahasiswa.findOne
   );
 
+  app.post(
+    "/api/admins/import/mahasiswa",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    fileUpload(uploadOpts),
+    mahasiswa.importExcel
+  );
+
   /* 
   ========================================
   Routes Admins : Dosen Pengampu
@@ -232,6 +239,11 @@ module.exports = (app) => {
     "/api/admins/semester/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findOne
+  );
+  app.get(
+    "/api/mahasiswa/semester/active",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    semester.findActive
   );
 
   app.get(

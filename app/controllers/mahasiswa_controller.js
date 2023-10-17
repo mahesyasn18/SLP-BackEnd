@@ -1,6 +1,8 @@
 const { angkatan } = require("../models");
 const db = require("../models");
 const Mahasiswa = db.mahasiswa;
+const XLSX = require("xlsx");
+const fs = require("fs");
 
 exports.create = (req, res) => {
   // Create an mahasiswa
@@ -48,9 +50,7 @@ exports.importExcel = async (req, res) => {
     const failureData = [];
 
     for (let i = 0; i < data.length; i++) {
-      const { nim, nama, username, password, no_telp, no_telp_orang_tua, role_id,prodi_id,kelas_id,angkatan_id } = data[i];
-      const mahasiswa = {
-
+      const {
         nim,
         nama,
         username,
@@ -61,7 +61,18 @@ exports.importExcel = async (req, res) => {
         prodi_id,
         kelas_id,
         angkatan_id,
-
+      } = data[i];
+      const mahasiswa = {
+        nim,
+        nama,
+        username,
+        password,
+        no_telp,
+        no_telp_orang_tua,
+        role_id,
+        prodi_id,
+        kelas_id,
+        angkatan_id,
       };
 
       try {
@@ -124,6 +135,7 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
   const id = req.params.id;
+  console.log(id);
 
   Mahasiswa.destroy({
     where: { nim: id },
