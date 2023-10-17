@@ -216,6 +216,13 @@ db.perizinan.belongsTo(db.mahasiswa, {
   foreignKey: "nim",
 });
 
+db.semester.hasOne(db.perizinan, {
+  foreignKey: "id_semester",
+});
+db.perizinan.belongsTo(db.semester, {
+  foreignKey: "id_semester",
+});
+
 /* 
   ========================================
   Relation Detail perizinan
