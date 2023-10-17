@@ -23,7 +23,7 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  Dosen.findAll()
+  Jadwal.findAll()
     .then((data) => {
       res.send(data);
     })

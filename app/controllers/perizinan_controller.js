@@ -143,7 +143,10 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  Perizinan.findAll({ include: [db.detailPerizinan, db.mahasiswa] })
+  const userId = req.userId;
+  Perizinan.findAll({
+    where: { nim: userId },
+  })
     .then((data) => {
       res.send(data);
     })
