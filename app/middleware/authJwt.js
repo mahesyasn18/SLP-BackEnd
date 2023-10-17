@@ -110,6 +110,7 @@ const authJwt = {
   verifyToken,
   isAdmin,
   isMahasiswa,
+  isDosenWali,
 };
 
 module.exports = authJwt;

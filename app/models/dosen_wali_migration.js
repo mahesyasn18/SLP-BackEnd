@@ -4,9 +4,8 @@ const bcrypt = require("bcrypt");
 module.exports = (sequelize, Sequelize) => {
   const DosenWali = sequelize.define("dosenWali", {
     id_dosenwali: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true,
-      autoIncrement: true,
     },
     username: {
       type: DataTypes.STRING,
