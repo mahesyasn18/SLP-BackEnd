@@ -1,5 +1,5 @@
 const db = require("../models");
-const DetailMatKul = db.detailMatkul;
+const Matkul = db.matakuliah;
 
 exports.create = (req, res) => {
   if (!req.body.tipe) {
@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     });
     return;
   }
-  if (!req.body.id_detailMatkul) {
+  if (!req.body.id_Matkul) {
     res.status(400).send({
       message: "Id cannot be empty!",
     });
@@ -22,106 +22,99 @@ exports.create = (req, res) => {
   }
 
   // Create an admin
-  const detailMatkul = {
-    id_detailMatkul: req.body.id_detailMatkul,
-    tipe: req.body.tipe,
-    sks: req.body.sks,
-    matkul_id: req.body.matkul_id,
-    prodi_id: req.body.prodi_id,
+  const Matkul = {
+    id_Matkul: req.body.id_Matkul,
+    nama_Matkul: req.body.nama_Matkul,
   };
 
-  DetailMatKul.create(detailMatkul)
+  Matkul.create(Matkul)
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
         message:
-          err.message ||
-          "Some error occurred while creating the detail Matkul.",
+          err.message || "Some error occurred while creating the  Matkul.",
       });
     });
 };
 
 exports.findAll = (req, res) => {
-  DetailMatKul.findAll({
-    include: [db.prodi, db.matakuliah],
-  })
+  Matkul.findAll()
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving detail Matkul.",
+        message: err.message || "Some error occurred while retrieving  Matkul.",
       });
     });
 };
 
 exports.update = (req, res) => {
-  const id = req.params.id_detailMatkul;
+  const id = req.params.id_Matkul;
 
-  DetailMatKul.update(req.body, {
-    where: { id_detailMatkul: id },
+  Matkul.update(req.body, {
+    where: { id_Matkul: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "detail Matkul was updated successfully.",
+          message: " Matkul was updated successfully.",
         });
       } else {
         res.send({
-          message: `Cannot update detail Matkul with id=${id}. Maybe detail Matkul was not found or req.body is empty!`,
+          message: `Cannot update  Matkul with id=${id}. Maybe detai lMatkul was not found or req.body is empty!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error updating detail Matkul with id=" + id,
+        message: "Error updating  Matkul with id=" + id,
       });
     });
 };
 
 exports.delete = (req, res) => {
-  const id = req.params.id_detailMatkul;
+  const id = req.params.id_Matkul;
 
-  DetailMatKul.destroy({
-    where: { id_detailMatkul: id },
+  Matkul.destroy({
+    where: { id_Matkul: id },
   })
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "detail Matkul was deleted successfully!",
+          message: " Matkul was deleted successfully!",
         });
       } else {
         res.send({
-          message: `Cannot delete detail Matkul with id=${id}. Maybe detail Matkul was not found!`,
+          message: `Cannot delete  Matkul with id=${id}. Maybe  Matkul was not found!`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Could not detail Matkul with id Mata kuliah=" + id,
+        message: "Could not  Matkul with id Mata kuliah=" + id,
       });
     });
 };
 
 exports.findOne = (req, res) => {
-  const id = req.params.id_detailMatkul;
+  const id = req.params.id_Matkul;
 
-  DetailMatKul.findByPk(id)
+  Matkul.findByPk(id)
     .then((data) => {
       if (data) {
         res.send(data);
       } else {
         res.status(404).send({
-          message: `Cannot find Detail Matkul with id=${id}.`,
+          message: `Cannot find  Matkul with id=${id}.`,
         });
       }
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error retrieving Detail Matkul with id=" + id,
+        message: "Error retrieving  Matkul with id=" + id,
       });
     });
 };
