@@ -142,6 +142,12 @@ module.exports = (app) => {
     dosen_wali.create
   );
 
+  app.delete(
+    "/api/admins/dosen_wali/delete/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.delete
+  );
+  
   app.get(
     "/api/admins/dosen_wali/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -209,7 +215,7 @@ module.exports = (app) => {
   );
 
   app.put(
-    "/api/admins/semester/:id",
+    "/api/admins/semester/update/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.update
   );

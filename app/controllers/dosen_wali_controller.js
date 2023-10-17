@@ -2,16 +2,52 @@ const db = require("../models");
 const Dosen_Wali = db.dosenWali;
 
 exports.create = (req, res) => {
-    if (!req.body.id_dosenwali) {
+    if (!req.body.username) {
         res.status(400).send({
-            message: "kode dosen wali cannot be empty!"
+            message: "username dosen wali cannot be empty!"
+        });
+        return;
+    }else if (!req.body.password) {
+        res.status(400).send({
+            message: "password dosen wali cannot be empty!"
+        });
+        return;
+    }else if (!req.body.role_id) {
+        res.status(400).send({
+            message: "role_id dosen wali cannot be empty!"
+        });
+        return;
+    }else if (!req.body.dosen_id) {
+        res.status(400).send({
+            message: "dosen_id dosen wali cannot be empty!"
+        });
+        return;
+    }else if (!req.body.prodi_id) {
+        res.status(400).send({
+            message: "prodi_id dosen wali cannot be empty!"
+        });
+        return;
+    }else if (!req.body.kelas_id) {
+        res.status(400).send({
+            message: "kelas_id dosen wali cannot be empty!"
+        });
+        return;
+    }else if (!req.body.angkatan_id) {
+        res.status(400).send({
+            message: "angkatan_id dosen wali cannot be empty!"
         });
         return;
     }
 
     // Create a Dosen Wali
     const dosen_wali = {
-        id_dosenwali: req.body.id_dosenwali
+        username: req.body.username,
+        password: req.body.password,
+        role_id: req.body.role_id,
+        dosen_id: req.body.dosen_id,
+        prodi_id: req.body.prodi_id,
+        kelas_id: req.body.kelas_id,
+        angkatan_id: req.body.angkatan_id,
     };
 
     Dosen_Wali.create(dosen_wali)
@@ -27,7 +63,9 @@ exports.create = (req, res) => {
 }
 
 exports.findAll = (req, res) => {
-    Dosen_Wali.findAll()
+    Dosen_Wali.findAll({
+        include: [db.prodi, db.angkatan, db.kelas, db.dosen],
+    })
         .then(data => {
             res.send(data);
         })
