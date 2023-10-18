@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require('../models');
 const Jadwal = db.jadwal;
 
 exports.create = (req, res) => {
@@ -17,19 +17,36 @@ exports.create = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the Admin.",
+        message: err.message || 'Some error occurred while creating the jadwal mata kuliah.',
       });
     });
 };
 
 exports.findAll = (req, res) => {
-  Jadwal.findAll()
+  Jadwal.findAll({
+    include: [
+      db.kelas,
+      db.semester,
+      {
+        model: db.detailMatkul,
+        include: [db.matakuliah],
+      },
+      {
+        model: db.detailMatkul,
+        include: [db.prodi],
+      },
+    ],
+  })
     .then((data) => {
+      data.sort((a, b) => {
+        return parseInt(a.id_jadwal) - parseInt(b.id_jadwal);
+      });
       res.send(data);
+      console.log('di findAll' + data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving Kelas.",
+        message: err.message || 'Some error occurred while retrieving jadwal mata kuliah.',
       });
     });
 };
@@ -43,7 +60,7 @@ exports.update = (req, res) => {
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Jadwal Mata kuliah was updated successfully.",
+          message: 'Jadwal Mata kuliah was updated successfully.',
         });
       } else {
         res.send({
@@ -53,7 +70,7 @@ exports.update = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error updating Jadwal Mata kuliah with id=" + id,
+        message: 'Error updating Jadwal Mata kuliah with id=' + id,
       });
     });
 };
@@ -67,7 +84,7 @@ exports.delete = (req, res) => {
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Jadwal Mata kuliah was deleted successfully!",
+          message: 'Jadwal Mata kuliah was deleted successfully!',
         });
       } else {
         res.send({
@@ -77,7 +94,7 @@ exports.delete = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Could not delete Jadwal Mata kuliah with id=" + id,
+        message: 'Could not delete Jadwal Mata kuliah with id=' + id,
       });
     });
 };
@@ -97,7 +114,7 @@ exports.findOne = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: "Error retrieving Jadwal Mata kuliah with id=" + id,
+        message: 'Error retrieving Jadwal Mata kuliah with id=' + id,
       });
     });
 };
