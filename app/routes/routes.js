@@ -240,6 +240,13 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findOne
   );
+
+  app.delete(
+    "/api/admins/semester/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.delete
+  );
+
   app.get(
     "/api/mahasiswa/semester/active",
     [authJwt.verifyToken, authJwt.isMahasiswa],
