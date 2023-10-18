@@ -94,7 +94,8 @@ exports.create = (req, res) => {
           tanggal_awal: req.body.tanggal_awal,
           tanggal_akhir: req.body.tanggal_akhir,
           nim: req.body.nim,
-          detailPerizinan: [perizinanDetails], // Remove square brackets here
+          detailPerizinan: [perizinanDetails],
+          id_semester: req.body.id_semester,
         };
         if (!perizinan.id_perizinan) {
           res.status(400).send({
@@ -143,7 +144,10 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  Perizinan.findAll({ include: [db.detailPerizinan, db.mahasiswa] })
+  const userId = req.userId;
+  Perizinan.findAll({
+    where: { nim: userId },
+  })
     .then((data) => {
       res.send(data);
     })

@@ -31,6 +31,7 @@ db.matakuliah = require("./mata_kuliah_migration.js")(sequelize, Sequelize);
 db.detailMatkul = require("./detail_matkul_migration.js")(sequelize, Sequelize);
 db.semester = require("./semester_migration.js")(sequelize, Sequelize);
 db.perizinan = require("./perizinan_migratin.js")(sequelize, Sequelize);
+db.walikelas = require("./wali_kelas_migration.js")(sequelize, Sequelize);
 db.detailPerizinan = require("./detail_perizinan_migration.js")(
   sequelize,
   Sequelize
@@ -216,6 +217,13 @@ db.perizinan.belongsTo(db.mahasiswa, {
   foreignKey: "nim",
 });
 
+db.semester.hasOne(db.perizinan, {
+  foreignKey: "id_semester",
+});
+db.perizinan.belongsTo(db.semester, {
+  foreignKey: "id_semester",
+});
+
 /* 
   ========================================
   Relation Detail perizinan
@@ -235,6 +243,21 @@ db.detailMatkul.hasOne(db.detailPerizinan, {
 });
 db.detailPerizinan.belongsTo(db.detailMatkul, {
   foreignKey: "id_detail_matkul",
+});
+
+db.mahasiswa.hasOne(db.walikelas, {
+  foreignKey: "nim",
+});
+db.walikelas.belongsTo(db.mahasiswa, {
+  foreignKey: "nim",
+});
+
+//detail perizinan dan detail matkul
+db.dosenWali.hasOne(db.walikelas, {
+  foreignKey: "id_dosenwali",
+});
+db.walikelas.belongsTo(db.dosenWali, {
+  foreignKey: "id_dosenwali",
 });
 
 db.ROLES = ["admin", "mahasiswa", "dosenWali"];

@@ -13,6 +13,7 @@ const jadwal = require("../controllers/jadwal_controller");
 const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
 const matkul = require("../controllers/mataKuliah_controller");
+const perizinanDosen = require("../controllers/perizinana_dosenWali_controller");
 const fileUpload = require("express-fileupload");
 const express = require("express");
 const path = require("path");
@@ -150,6 +151,12 @@ module.exports = (app) => {
     dosen_wali.create
   );
 
+  app.delete(
+    "/api/admins/dosen_wali/delete/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    dosen_wali.delete
+  );
+
   app.get(
     "/api/admins/dosen_wali/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -217,7 +224,7 @@ module.exports = (app) => {
   );
 
   app.put(
-    "/api/admins/semester/:id",
+    "/api/admins/semester/update/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.update
   );
@@ -232,6 +239,11 @@ module.exports = (app) => {
     "/api/admins/semester/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findOne
+  );
+  app.get(
+    "/api/mahasiswa/semester/active",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    semester.findActive
   );
 
   app.get(
@@ -306,6 +318,13 @@ module.exports = (app) => {
   ========================================
 */
   app.get(
+    "/api/mahasiswa/detail_matkul",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    detail_matkul.findAll
+  );
+
+  //user
+  app.get(
     "/api/test/mahasiswa",
     [authJwt.verifyToken, authJwt.isMahasiswa],
     mahasiswa_roles.mahasiswaBoard
@@ -323,6 +342,48 @@ module.exports = (app) => {
   );
 
   app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(
+      "D:/study/Polban/Semester3/7. Proyek 3/SLP-BackEnd/",
+      "uploads",
+      filename
+    );
+
+    // Mengirimkan file surat kepada pengguna
+    res.sendFile(filePath);
+  });
+
+  /* 
+  ========================================
+  Routes Dosen Wali
+  ========================================
+*/
+
+  app.get(
+    "/api/dosenWali/perizinan",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findAll
+  );
+
+  app.get(
+    "/api/dosenWali/perizinan/izin",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findIzin
+  );
+
+  app.get(
+    "/api/dosenWali/perizinan/sakit",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findSakit
+  );
+
+  app.put(
+    "/api/dosenWali/perizinan/update/:id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.update
+  );
+
+  app.get("/api/dosenWali/perizinan/surat/:filename", (req, res) => {
     const filename = req.params.filename;
     const filePath = path.join(
       "D:/study/Polban/Semester3/7. Proyek 3/SLP-BackEnd/",

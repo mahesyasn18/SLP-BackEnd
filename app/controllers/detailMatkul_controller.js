@@ -14,16 +14,8 @@ exports.create = (req, res) => {
     });
     return;
   }
-  if (!req.body.id_detailMatkul) {
-    res.status(400).send({
-      message: "Id cannot be empty!",
-    });
-    return;
-  }
-
-  // Create an admin
+  // Create a detailMatkul without specifying id_detailMatkul
   const detailMatkul = {
-    id_detailMatkul: req.body.id_detailMatkul,
     tipe: req.body.tipe,
     sks: req.body.sks,
     matkul_id: req.body.matkul_id,

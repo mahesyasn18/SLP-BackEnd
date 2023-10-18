@@ -10,6 +10,7 @@ const initialDetailMataKuliah = require("./detail_mata_kuliah_seeders");
 const initialJadwal = require("./jadwal_matkul_seeders");
 const initialDosen = require("./dosen_seeders");
 const initialDosenWali = require("./dosen_wali_seeders");
+const initialWaliKelas = require("./wali_kelas_seeders");
 
 module.exports = {
   initialRole,
@@ -24,4 +25,5 @@ module.exports = {
   initialJadwal,
   initialDosen,
   initialDosenWali,
+  initialWaliKelas,
 };
