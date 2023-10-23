@@ -51,8 +51,6 @@ exports.create = (req, res) => {
     angkatan_id: req.body.angkatan_id,
   };
 
-  console.lo;
-
   Dosen_Wali.create(dosen_wali)
     .then((data) => {
       res.send(data);

@@ -1,21 +1,27 @@
 const { DataTypes } = require("sequelize");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
-module.exports = (sequelize, Sequelize) => {
+module.exports = (sequelize) => {
   const Admin = sequelize.define("admin", {
+    admin_id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
+      primaryKey: true,
+    },
     nama: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     username: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     password: {
       type: DataTypes.STRING,
       set(value) {
-        const hashedPassword = bcrypt.hashSync(value, 16);
-        this.setDataValue('password', hashedPassword);
-      }
-    }
+        const hashedPassword = bcrypt.hashSync(value, 10);
+        this.setDataValue("password", hashedPassword);
+      },
+    },
   });
 
   return Admin;

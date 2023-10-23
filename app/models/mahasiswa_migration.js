@@ -4,19 +4,21 @@ const bcrypt = require("bcrypt");
 module.exports = (sequelize, Sequelize) => {
   const Mahasiswa = sequelize.define("mahasiswa", {
     nim: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
       primaryKey: true,
     },
     nama: {
       type: DataTypes.STRING,
     },
-    username: {
+    email: {
       type: DataTypes.STRING,
     },
     password: {
       type: DataTypes.STRING,
       set(value) {
-        const hashedPassword = bcrypt.hashSync(value, 16);
+        const hashedPassword = bcrypt.hashSync(value, 10);
         this.setDataValue("password", hashedPassword);
       },
     },

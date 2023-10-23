@@ -1,5 +1,5 @@
 const express = require("express");
-const bodyParser = require("body-parser");
+
 const cors = require("cors");
 const cookieSession = require("cookie-session");
 
@@ -33,12 +33,9 @@ db.sequelize.sync({ force: true }).then(() => {
   seeders.initialProdi();
   seeders.initialAngkatan();
   seeders.intialSemester();
-  seeders.initialMahasiswa();
   seeders.initialMataKuliah();
   seeders.initialDetailMataKuliah();
   seeders.initialJadwal();
-  seeders.initialDosen();
-  seeders.initialDosenWali();
 });
 // db.sequelize.sync({ force: true });
 // db.sequelize.sync();

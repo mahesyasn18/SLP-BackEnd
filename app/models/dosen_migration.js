@@ -3,7 +3,9 @@ const { DataTypes } = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
   const Dosen = sequelize.define("dosen", {
     kode_dosen: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      allowNull: false,
       primaryKey: true,
     },
     nama_dosen: {
