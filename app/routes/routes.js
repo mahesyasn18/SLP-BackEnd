@@ -15,7 +15,6 @@ const detail_matkul = require("../controllers/detailMatkul_controller");
 const matkul = require("../controllers/mataKuliah_controller");
 const perizinanDosen = require("../controllers/perizinana_dosenWali_controller");
 const fileUpload = require("express-fileupload");
-const express = require("express");
 const path = require("path");
 const uploadOpts = {
   useTempFiles: true,
@@ -240,6 +239,13 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findOne
   );
+
+  app.delete(
+    "/api/admins/semester/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    semester.delete
+  );
+
   app.get(
     "/api/mahasiswa/semester/active",
     [authJwt.verifyToken, authJwt.isMahasiswa],
@@ -372,7 +378,19 @@ module.exports = (app) => {
   );
 
   app.get(
+    "/api/dosenWali/mahasiswa/:dosenwali_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    mahasiswa.findByClass
+  );
+
+  app.get(
     "/api/dosenWali/perizinan/sakit",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findSakits
+  );
+
+  app.get(
+    "/api/dosenWali/perizinan/sakit/:walidosen_id",
     [authJwt.verifyToken, authJwt.isDosenWali],
     perizinanDosen.findSakit
   );

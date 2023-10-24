@@ -17,19 +17,39 @@ exports.create = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the Admin.",
+        message:
+          err.message ||
+          "Some error occurred while creating the jadwal mata kuliah.",
       });
     });
 };
 
 exports.findAll = (req, res) => {
-  Jadwal.findAll()
+  Jadwal.findAll({
+    include: [
+      db.kelas,
+      db.semester,
+      {
+        model: db.detailMatkul,
+        include: [db.matakuliah],
+      },
+      {
+        model: db.detailMatkul,
+        include: [db.prodi],
+      },
+    ],
+  })
     .then((data) => {
+      data.sort((a, b) => {
+        return parseInt(a.id_jadwal) - parseInt(b.id_jadwal);
+      });
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving Kelas.",
+        message:
+          err.message ||
+          "Some error occurred while retrieving jadwal mata kuliah.",
       });
     });
 };

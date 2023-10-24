@@ -91,12 +91,38 @@ exports.findIzin = (req, res) => {
     });
 };
 
-exports.findSakit = (req, res) => {
+exports.findSakits = (req, res) => {
   Perizinan.findAll({
     where: {
       jenis: "Sakit", // Cocokkan dengan ID DosenWali
       status: "Menunggu Verifikasi",
     },
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Kelas.",
+      });
+    });
+};
+
+exports.findSakit = (req, res) => {
+  const walidosen_id = req.params.walidosen_id;
+  Perizinan.findAll({
+    where: {
+      jenis: "Sakit",
+      status: "Menunggu Verifikasi",
+    },
+    include: [
+      {
+        model: db.mahasiswa,
+        where: {
+          walidosen_id: walidosen_id,
+        },
+      },
+    ],
   })
     .then((data) => {
       res.send(data);

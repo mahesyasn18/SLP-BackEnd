@@ -13,17 +13,6 @@ exports.create = (req, res) => {
     res.status(400).send({
       message: "nama cannot be empty!",
     });
-    return;
-  } else if (!req.body.username) {
-    res.status(400).send({
-      message: "username cannot be empty!",
-    });
-    return;
-  } else if (!req.body.password) {
-    res.status(400).send({
-      message: "password cannot be empty!",
-    });
-    return;
   } else if (!req.body.email) {
     res.status(400).send({
       message: "no_telp cannot be empty!",
@@ -35,8 +24,6 @@ exports.create = (req, res) => {
   const dosen = {
     kode_dosen: req.body.kode_dosen,
     nama_dosen: req.body.nama_dosen,
-    username: req.body.username,
-    password: req.body.password,
     email: req.body.email,
   };
 

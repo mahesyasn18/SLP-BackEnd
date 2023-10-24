@@ -30,7 +30,6 @@ isAdmin = async (req, res, next) => {
         model: db.role,
       },
     });
-    console.log(req);
     if (!admin) {
       return res.status(404).send({
         message: "Admin not found",
@@ -57,7 +56,6 @@ isMahasiswa = async (req, res, next) => {
         model: db.role,
       },
     });
-    console.log(req);
 
     if (!mahasiswa) {
       return res.status(404).send({
@@ -85,7 +83,6 @@ isDosenWali = async (req, res, next) => {
         model: db.role,
       },
     });
-    console.log(req);
 
     if (!dosenwali) {
       return res.status(404).send({

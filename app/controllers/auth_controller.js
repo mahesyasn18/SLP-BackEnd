@@ -15,30 +15,32 @@ exports.signin = async (req, res) => {
       },
       include: Role,
     });
-
-    const mahasiswaUser = await Mahasiswa.findOne({
-      where: {
-        username: req.body.username,
-      },
-      include: Role,
-    });
-
-    const dosenWaliUser = await DosenWali.findOne({
-      where: {
-        username: req.body.username,
-      },
-      include: Role,
-    });
-
     let user = adminUser; // Default to Admin user
     let userType = "admin";
 
-    if (!adminUser && mahasiswaUser) {
-      user = mahasiswaUser;
-      userType = "mahasiswa";
-    } else if (!adminUser && dosenWaliUser) {
-      user = dosenWaliUser;
-      userType = "dosen_wali";
+    if (!adminUser) {
+      const mahasiswaUser = await Mahasiswa.findOne({
+        where: {
+          nim: req.body.username,
+        },
+        include: Role,
+      });
+
+      const dosenWaliUser = await DosenWali.findOne({
+        where: {
+          username: req.body.username,
+        },
+        include: Role,
+      });
+
+      if (!adminUser && mahasiswaUser) {
+        user = mahasiswaUser;
+        userType = "mahasiswa";
+      } else if (!adminUser && dosenWaliUser) {
+        user = dosenWaliUser;
+        userType = "dosen_wali";
+      }
+    } else {
     }
 
     if (!user) {
@@ -55,7 +57,7 @@ exports.signin = async (req, res) => {
     }
 
     const roleName = user.role ? user.role.name : "";
-    const id = user.id ?? user.nim ?? user.id_dosenwali;
+    const id = user.admin_id ?? user.nim ?? user.id_dosenwali;
     const token = jwt.sign({ id: id, userType }, config.secret, {
       algorithm: "HS256",
       allowInsecureKeySizes: true,
@@ -68,7 +70,6 @@ exports.signin = async (req, res) => {
       httpOnly: true, // Ensures that the cookie is only accessible via HTTP (not JavaScript)
     });
 
-    console.log(res);
     return res.status(200).send({
       id: id,
       username: user.username,

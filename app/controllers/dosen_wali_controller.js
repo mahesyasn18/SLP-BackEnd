@@ -1,45 +1,23 @@
 const db = require("../models");
 const Dosen_Wali = db.dosenWali;
+const mahasiswa = db.mahasiswa;
 
 exports.create = (req, res) => {
-  if (!req.body.username) {
+  if (
+    !req.body.username ||
+    !req.body.password ||
+    !req.body.role_id ||
+    !req.body.dosen_id ||
+    !req.body.prodi_id ||
+    !req.body.kelas_id ||
+    !req.body.angkatan_id
+  ) {
     res.status(400).send({
-      message: "username dosen wali cannot be empty!",
-    });
-    return;
-  } else if (!req.body.password) {
-    res.status(400).send({
-      message: "password dosen wali cannot be empty!",
-    });
-    return;
-  } else if (!req.body.role_id) {
-    res.status(400).send({
-      message: "role_id dosen wali cannot be empty!",
-    });
-    return;
-  } else if (!req.body.dosen_id) {
-    res.status(400).send({
-      message: "dosen_id dosen wali cannot be empty!",
-    });
-    return;
-  } else if (!req.body.prodi_id) {
-    res.status(400).send({
-      message: "prodi_id dosen wali cannot be empty!",
-    });
-    return;
-  } else if (!req.body.kelas_id) {
-    res.status(400).send({
-      message: "kelas_id dosen wali cannot be empty!",
-    });
-    return;
-  } else if (!req.body.angkatan_id) {
-    res.status(400).send({
-      message: "angkatan_id dosen wali cannot be empty!",
+      message: "Please provide all the required fields.",
     });
     return;
   }
 
-  // Create a Dosen Wali
   const dosen_wali = {
     id_dosenwali: req.body.angkatan_id + req.body.dosen_id + req.body.kelas_id,
     username: req.body.username,
@@ -51,13 +29,32 @@ exports.create = (req, res) => {
     angkatan_id: req.body.angkatan_id,
   };
 
+  // First, create the Dosen Wali
   Dosen_Wali.create(dosen_wali)
     .then((data) => {
-      res.send(data);
+      // Now, update the Mahasiswa fields
+      return mahasiswa.update(
+        {
+          walidosen_id:
+            req.body.angkatan_id + req.body.dosen_id + req.body.kelas_id,
+        },
+        {
+          where: {
+            prodi_id: req.body.prodi_id,
+            kelas_id: req.body.kelas_id,
+            angkatan_id: req.body.angkatan_id,
+          },
+        }
+      );
+    })
+    .then(() => {
+      res.send("Dosen Wali created and Mahasiswa fields updated successfully.");
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the Admin.",
+        message:
+          err.message ||
+          "Some error occurred while creating the Dosen Wali and updating Mahasiswa fields.",
       });
     });
 };
@@ -71,7 +68,7 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving Kelas.",
+        message: err.message || "Some error occurred while creating the Admin.",
       });
     });
 };

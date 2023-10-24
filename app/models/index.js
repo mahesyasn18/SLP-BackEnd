@@ -43,6 +43,7 @@ db.detailPerizinan = require("./detail_perizinan_migration.js")(
 */
 //admin dan role
 db.role.hasOne(db.admin, {
+  onDelete: "RESTRICT",
   foreignKey: "role_id",
 });
 db.admin.belongsTo(db.role, {
@@ -57,6 +58,7 @@ db.admin.belongsTo(db.role, {
 
 // Mahasiswa and Role relationship
 db.role.hasOne(db.mahasiswa, {
+  onDelete: "RESTRICT",
   foreignKey: "role_id",
 });
 db.mahasiswa.belongsTo(db.role, {
@@ -65,6 +67,7 @@ db.mahasiswa.belongsTo(db.role, {
 
 // Mahasiswa and Prodi relationship
 db.prodi.hasOne(db.mahasiswa, {
+  onDelete: "RESTRICT",
   foreignKey: "prodi_id",
 });
 db.mahasiswa.belongsTo(db.prodi, {
@@ -73,6 +76,7 @@ db.mahasiswa.belongsTo(db.prodi, {
 
 // Mahasiswa and Kelas relationship
 db.kelas.hasOne(db.mahasiswa, {
+  onDelete: "RESTRICT",
   foreignKey: "kelas_id",
 });
 db.mahasiswa.belongsTo(db.kelas, {
@@ -81,10 +85,20 @@ db.mahasiswa.belongsTo(db.kelas, {
 
 //mahasiswa dan angkatan
 db.angkatan.hasOne(db.mahasiswa, {
+  onDelete: "RESTRICT",
   foreignKey: "angkatan_id",
 });
 db.mahasiswa.belongsTo(db.angkatan, {
   foreignKey: "angkatan_id",
+});
+
+//mahasiswa dan dosenwali
+db.dosenWali.hasOne(db.mahasiswa, {
+  onDelete: "RESTRICT",
+  foreignKey: "walidosen_id",
+});
+db.mahasiswa.belongsTo(db.dosenWali, {
+  foreignKey: "walidosen_id",
 });
 
 /* 
@@ -95,6 +109,7 @@ db.mahasiswa.belongsTo(db.angkatan, {
 
 // Dosen and Role relationship
 db.role.hasOne(db.dosenWali, {
+  onDelete: "RESTRICT",
   foreignKey: "role_id",
 });
 
@@ -104,6 +119,7 @@ db.dosenWali.belongsTo(db.role, {
 
 // dosenwali dan dosen
 db.dosen.hasOne(db.dosenWali, {
+  onDelete: "RESTRICT",
   foreignKey: "dosen_id",
 });
 
@@ -113,6 +129,7 @@ db.dosenWali.belongsTo(db.dosen, {
 
 //dosenwali dan angkatan
 db.angkatan.hasOne(db.dosenWali, {
+  onDelete: "RESTRICT",
   foreignKey: "angkatan_id",
 });
 db.dosenWali.belongsTo(db.angkatan, {
@@ -121,6 +138,7 @@ db.dosenWali.belongsTo(db.angkatan, {
 
 //dosenwali dan kelas
 db.kelas.hasOne(db.dosenWali, {
+  onDelete: "RESTRICT",
   foreignKey: "kelas_id",
 });
 db.dosenWali.belongsTo(db.kelas, {
@@ -129,6 +147,7 @@ db.dosenWali.belongsTo(db.kelas, {
 
 //dosenwali dan prodi
 db.prodi.hasOne(db.dosenWali, {
+  onDelete: "RESTRICT",
   foreignKey: "prodi_id",
 });
 db.dosenWali.belongsTo(db.prodi, {
@@ -143,6 +162,7 @@ db.dosenWali.belongsTo(db.prodi, {
 
 //detail matkul dan prodi
 db.prodi.hasOne(db.detailMatkul, {
+  onDelete: "RESTRICT",
   foreignKey: "prodi_id",
 });
 db.detailMatkul.belongsTo(db.prodi, {
@@ -151,6 +171,7 @@ db.detailMatkul.belongsTo(db.prodi, {
 
 //detail matkul dan matkul
 db.matakuliah.hasOne(db.detailMatkul, {
+  onDelete: "RESTRICT",
   foreignKey: "matkul_id",
 });
 db.detailMatkul.belongsTo(db.matakuliah, {
@@ -165,6 +186,7 @@ db.detailMatkul.belongsTo(db.matakuliah, {
 
 //jadwal dan semester
 db.semester.hasOne(db.jadwal, {
+  onDelete: "RESTRICT",
   foreignKey: "semester_id",
 });
 db.jadwal.belongsTo(db.semester, {
@@ -173,6 +195,7 @@ db.jadwal.belongsTo(db.semester, {
 
 //Jadwal matkul dan matkul
 db.detailMatkul.hasOne(db.jadwal, {
+  onDelete: "RESTRICT",
   foreignKey: "detailMatkul_id",
 });
 db.jadwal.belongsTo(db.detailMatkul, {
@@ -181,6 +204,7 @@ db.jadwal.belongsTo(db.detailMatkul, {
 
 //Jadwal matkul dan kelas
 db.kelas.hasOne(db.jadwal, {
+  onDelete: "RESTRICT",
   foreignKey: "kelas_id",
 });
 db.jadwal.belongsTo(db.kelas, {
@@ -211,6 +235,7 @@ db.jadwal.belongsToMany(db.mahasiswa, { through: "mengikuti" });
 */
 //detail perizinan dan mahasiswa
 db.mahasiswa.hasOne(db.perizinan, {
+  onDelete: "RESTRICT",
   foreignKey: "nim",
 });
 db.perizinan.belongsTo(db.mahasiswa, {
@@ -218,6 +243,7 @@ db.perizinan.belongsTo(db.mahasiswa, {
 });
 
 db.semester.hasOne(db.perizinan, {
+  onDelete: "RESTRICT",
   foreignKey: "id_semester",
 });
 db.perizinan.belongsTo(db.semester, {
@@ -231,6 +257,7 @@ db.perizinan.belongsTo(db.semester, {
 */
 //detail perizinan dan mahasiswa
 db.perizinan.hasOne(db.detailPerizinan, {
+  onDelete: "RESTRICT",
   foreignKey: "perizinan_id",
 });
 db.detailPerizinan.belongsTo(db.perizinan, {
@@ -239,6 +266,7 @@ db.detailPerizinan.belongsTo(db.perizinan, {
 
 //detail perizinan dan detail matkul
 db.detailMatkul.hasOne(db.detailPerizinan, {
+  onDelete: "RESTRICT",
   foreignKey: "id_detail_matkul",
 });
 db.detailPerizinan.belongsTo(db.detailMatkul, {
@@ -246,6 +274,7 @@ db.detailPerizinan.belongsTo(db.detailMatkul, {
 });
 
 db.mahasiswa.hasOne(db.walikelas, {
+  onDelete: "RESTRICT",
   foreignKey: "nim",
 });
 db.walikelas.belongsTo(db.mahasiswa, {
@@ -254,6 +283,7 @@ db.walikelas.belongsTo(db.mahasiswa, {
 
 //detail perizinan dan detail matkul
 db.dosenWali.hasOne(db.walikelas, {
+  onDelete: "RESTRICT",
   foreignKey: "id_dosenwali",
 });
 db.walikelas.belongsTo(db.dosenWali, {

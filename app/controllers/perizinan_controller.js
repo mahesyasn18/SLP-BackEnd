@@ -24,12 +24,11 @@ exports.create = (req, res) => {
     }
 
     const filePath = path.join(req.file.filename);
-    console.log(req.body);
+
     const random4DigitNumber = Math.floor(1000 + Math.random() * 9000);
     const idss = req.body.nim + random4DigitNumber;
     let jml_jam = 0;
     const matkulData = req.body.matakuliah;
-    console.log(matkulData);
 
     if (!matkulData || matkulData.length === 0) {
       return res.status(400).send({
@@ -58,9 +57,6 @@ exports.create = (req, res) => {
         const flattenedResults = [].concat(...results); // Flatten the array of arrays
         const sks = flattenedResults.map((result) => result.dataValues.sks);
         const tipe = flattenedResults.map((result) => result.dataValues.tipe);
-
-        console.log("sks:", sks);
-        console.log("tipe:", tipe);
 
         const perizinanDetails = []; // Inisialisasi array untuk menyimpan data perizinanDetail
 

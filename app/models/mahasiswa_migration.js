@@ -4,9 +4,7 @@ const bcrypt = require("bcrypt");
 module.exports = (sequelize, Sequelize) => {
   const Mahasiswa = sequelize.define("mahasiswa", {
     nim: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
-      allowNull: false,
+      type: DataTypes.STRING,
       primaryKey: true,
     },
     nama: {

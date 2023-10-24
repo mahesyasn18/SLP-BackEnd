@@ -9,7 +9,7 @@ exports.create = (req, res) => {
   const mahasiswa = {
     nim: req.body.nim,
     nama: req.body.nama,
-    username: req.body.username,
+    email: req.body.username,
     password: req.body.password,
     no_telp: req.body.no_telp,
     no_telp_orang_tua: req.body.no_telp_orang_tua,
@@ -57,6 +57,7 @@ exports.importExcel = async (req, res) => {
         password,
         no_telp,
         no_telp_orang_tua,
+        walidosen_id,
         role_id,
         prodi_id,
         kelas_id,
@@ -69,6 +70,7 @@ exports.importExcel = async (req, res) => {
         password,
         no_telp,
         no_telp_orang_tua,
+        walidosen_id,
         role_id,
         prodi_id,
         kelas_id,
@@ -135,7 +137,6 @@ exports.update = (req, res) => {
 
 exports.delete = (req, res) => {
   const id = req.params.id;
-  console.log(id);
 
   Mahasiswa.destroy({
     where: { nim: id },
@@ -174,6 +175,24 @@ exports.findOne = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: "Error retrieving Mahasiswa with id=" + id,
+      });
+    });
+};
+
+exports.findByClass = (req, res) => {
+  const dosenwali_id = req.params.dosenwali_id;
+  Mahasiswa.findAll({
+    include: [db.prodi, db.angkatan, db.kelas],
+    where: {
+      walidosen_id: dosenwali_id,
+    },
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Kelas.",
       });
     });
 };

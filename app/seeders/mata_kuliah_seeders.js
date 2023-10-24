@@ -14,5 +14,21 @@ function initialMataKuliah() {
     id_matakuliah: "21IF2012",
     nama_matakuliah: "Basis Data",
   });
+  MataKuliah.create({
+    id_matakuliah: "21IF2013",
+    nama_matakuliah: "Pengantar Rekayasa Perangkat Lunak",
+  });
+  MataKuliah.create({
+    id_matakuliah: "21IF2014",
+    nama_matakuliah: "Aljabar Linear",
+  });
+  MataKuliah.create({
+    id_matakuliah: "21IF2015",
+    nama_matakuliah: "Komputer Grafik",
+  });
+  MataKuliah.create({
+    id_matakuliah: "21IF2016",
+    nama_matakuliah: "Proyek 3 : Pengembangan Perangkat Lunak Berbasis Web",
+  });
 }
 module.exports = initialMataKuliah;

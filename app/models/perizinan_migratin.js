@@ -2,8 +2,7 @@ const { DataTypes } = require("sequelize");
 module.exports = (sequelize, Sequelize) => {
   const Perizinan = sequelize.define("perizinan", {
     id_perizinan: {
-      type: DataTypes.UUID,
-      defaultValue: DataTypes.UUIDV4,
+      type: DataTypes.STRING,
       allowNull: false,
       primaryKey: true,
     },
