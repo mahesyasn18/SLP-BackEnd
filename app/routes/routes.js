@@ -9,7 +9,6 @@ const perizinan = require("../controllers/perizinan_controller");
 const semester = require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
-const jadwal = require("../controllers/jadwal_controller");
 const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
 const matkul = require("../controllers/mataKuliah_controller");
@@ -184,36 +183,6 @@ module.exports = (app) => {
     "/api/admins/prodi",
     [authJwt.verifyToken, authJwt.isAdmin],
     prodi.findAll
-  );
-
-  app.get(
-    "/api/admins/jadwal",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.findAll
-  );
-
-  app.put(
-    "/api/admins/jadwal/update/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.update
-  );
-
-  app.post(
-    "/api/admins/jadwal/create",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.create
-  );
-
-  app.delete(
-    "/api/admins/jadwal/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.delete
-  );
-
-  app.get(
-    "/api/admins/jadwal/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.findOne
   );
 
   app.get(

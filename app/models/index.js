@@ -26,7 +26,6 @@ db.mahasiswa = require("./mahasiswa_migration.js")(sequelize, Sequelize);
 db.dosen = require("./dosen_migration.js")(sequelize, Sequelize);
 db.dosenWali = require("./dosen_wali_migration.js")(sequelize, Sequelize);
 db.angkatan = require("./angkatan_migration.js")(sequelize, Sequelize);
-db.jadwal = require("./jadwal_matkul.js")(sequelize, Sequelize);
 db.matakuliah = require("./mata_kuliah_migration.js")(sequelize, Sequelize);
 db.detailMatkul = require("./detail_matkul_migration.js")(sequelize, Sequelize);
 db.semester = require("./semester_migration.js")(sequelize, Sequelize);
@@ -36,6 +35,7 @@ db.detailPerizinan = require("./detail_perizinan_migration.js")(
   sequelize,
   Sequelize
 );
+
 /* 
   ========================================
   Relation Admin
@@ -178,56 +178,29 @@ db.detailMatkul.belongsTo(db.matakuliah, {
   foreignKey: "matkul_id",
 });
 
-/* 
-  ========================================
-  Relation Jadwal Matkul
-  ========================================
-*/
-
-//jadwal dan semester
-db.semester.hasOne(db.jadwal, {
-  onDelete: "RESTRICT",
-  foreignKey: "semester_id",
-});
-db.jadwal.belongsTo(db.semester, {
-  foreignKey: "semester_id",
-});
-
-//Jadwal matkul dan matkul
-db.detailMatkul.hasOne(db.jadwal, {
-  onDelete: "RESTRICT",
-  foreignKey: "detailMatkul_id",
-});
-db.jadwal.belongsTo(db.detailMatkul, {
-  foreignKey: "detailMatkul_id",
-});
-
-//Jadwal matkul dan kelas
-db.kelas.hasOne(db.jadwal, {
-  onDelete: "RESTRICT",
-  foreignKey: "kelas_id",
-});
-db.jadwal.belongsTo(db.kelas, {
-  foreignKey: "kelas_id",
-});
-
-/* 
+/*
   ========================================
   Relation Dosen dan Mata Kuliah
   ========================================
 */
-
-db.dosen.belongsToMany(db.jadwal, { through: "mengajar" });
-db.jadwal.belongsToMany(db.dosen, { through: "mengajar" });
-
-/* 
-  ========================================
-  Relation Mahasiswa dan Mata Kuliah
-  ========================================
-*/
-db.mahasiswa.belongsToMany(db.jadwal, { through: "mengikuti" });
-db.jadwal.belongsToMany(db.mahasiswa, { through: "mengikuti" });
-
+const Mengajar = sequelize.define("mengajar", {});
+db.dosen.belongsToMany(db.detailMatkul, {
+  through: Mengajar,
+  foreignKey: "id_dosen",
+  otherKey: "id_detail_matkul",
+});
+db.detailMatkul.belongsToMany(db.dosen, {
+  through: Mengajar,
+  foreignKey: "id_detail_matkul",
+  otherKey: "id_dosen",
+});
+db.semester.hasOne(Mengajar, {
+  foreignKey: "id_semester",
+  onDelete: "RESTRICT",
+});
+Mengajar.belongsTo(db.semester, {
+  foreignKey: "id_semester",
+});
 /* 
   ========================================
   Relation perizinan
@@ -286,6 +259,48 @@ db.dosenWali.hasOne(db.walikelas, {
 });
 db.walikelas.belongsTo(db.dosenWali, {
   foreignKey: "id_dosenwali",
+});
+
+/* 
+  ========================================
+  Relation Angkatan dan detail matkul
+  ========================================
+*/
+
+const AngkatanMatkul = sequelize.define("angkatan_detail_matkul", {});
+db.angkatan.belongsToMany(db.detailMatkul, {
+  through: AngkatanMatkul,
+  foreignKey: "id_angkatan",
+  otherKey: "id_detail_matkul",
+});
+
+db.detailMatkul.belongsToMany(db.angkatan, {
+  through: AngkatanMatkul,
+  foreignKey: "id_detail_matkul",
+  otherKey: "id_angkatan",
+});
+db.semester.hasMany(AngkatanMatkul, {
+  foreignKey: "id_semester",
+  onDelete: "RESTRICT",
+});
+AngkatanMatkul.belongsTo(db.semester, {
+  foreignKey: "id_semester",
+});
+
+db.prodi.hasMany(AngkatanMatkul, {
+  foreignKey: "id_prodi",
+  onDelete: "RESTRICT",
+});
+AngkatanMatkul.belongsTo(db.prodi, {
+  foreignKey: "id_prodi",
+});
+
+db.kelas.hasMany(AngkatanMatkul, {
+  foreignKey: "id_kelas",
+  onDelete: "RESTRICT",
+});
+AngkatanMatkul.belongsTo(db.kelas, {
+  foreignKey: "id_kelas",
 });
 
 db.ROLES = ["admin", "mahasiswa", "dosenWali"];
