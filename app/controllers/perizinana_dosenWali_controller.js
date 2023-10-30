@@ -1,45 +1,30 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
-// const Mahasiswa = db.mahasiswa;
-// const DosenWali = db.dosenWali;
-
-// exports.findAll = (req, res) => {
-//   const userId = req.userId; // ID
-//   Perizinan.findAll({
-//     include: [
-//       {
-//         model: Mahasiswa,
-//         as: "mahasiswa", // Sesuaikan dengan alias asosiasi yang sesuai di model Anda
-//         where: {
-//           nim: Perizinan.nim,
-//         },
-//         include: [
-//           {
-//             model: DosenWali,
-//             as: "dosenWali", // Sesuaikan dengan alias asosiasi yang sesuai di model Anda
-//             where: {
-//               id_dosenwali: userId, // Cocokkan dengan ID DosenWali
-//               angkatan_id: Mahasiswa.angkatan_id,
-//               kelas_id: Mahasiswa.kelas_id,
-//               prodi_id: Mahasiswa.prodi_id,
-//             },
-//           },
-//         ],
-//       },
-//     ],
-//   })
-//     .then((data) => {
-//       res.send(data);
-//     })
-//     .catch((err) => {
-//       res.status(500).send({
-//         message: err.message || "Some error occurred while retrieving Kelas.",
-//       });
-//     });
-// };
 
 exports.findAll = (req, res) => {
   Perizinan.findAll()
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Kelas.",
+      });
+    });
+};
+
+exports.findAllbyDosen = (req, res) => {
+  const walidosen_id = req.params.walidosen_id;
+  Perizinan.findAll({
+    include: [
+      {
+        model: db.mahasiswa,
+        where: {
+          walidosen_id: walidosen_id,
+        },
+      },
+    ],
+  })
     .then((data) => {
       res.send(data);
     })
@@ -75,11 +60,46 @@ exports.update = (req, res) => {
 };
 
 exports.findIzin = (req, res) => {
+  const walidosen_id = req.params.walidosen_id;
   Perizinan.findAll({
     where: {
       jenis: "Izin", // Cocokkan dengan ID DosenWali
       status: "Menunggu Verifikasi",
     },
+    include: [
+      {
+        model: db.mahasiswa,
+        where: {
+          walidosen_id: walidosen_id,
+        },
+      },
+    ],
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Kelas.",
+      });
+    });
+};
+
+exports.findIzinbyDosen = (req, res) => {
+  const walidosen_id = req.params.walidosen_id;
+  Perizinan.findAll({
+    where: {
+      jenis: "Izin", // Cocokkan dengan ID DosenWali
+      status: "Menunggu Verifikasi",
+    },
+    include: [
+      {
+        model: db.mahasiswa,
+        where: {
+          walidosen_id: walidosen_id,
+        },
+      },
+    ],
   })
     .then((data) => {
       res.send(data);

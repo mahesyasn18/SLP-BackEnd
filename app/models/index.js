@@ -257,7 +257,6 @@ db.perizinan.belongsTo(db.semester, {
 */
 //detail perizinan dan mahasiswa
 db.perizinan.hasOne(db.detailPerizinan, {
-  onDelete: "RESTRICT",
   foreignKey: "perizinan_id",
 });
 db.detailPerizinan.belongsTo(db.perizinan, {
@@ -266,7 +265,6 @@ db.detailPerizinan.belongsTo(db.perizinan, {
 
 //detail perizinan dan detail matkul
 db.detailMatkul.hasOne(db.detailPerizinan, {
-  onDelete: "RESTRICT",
   foreignKey: "id_detail_matkul",
 });
 db.detailPerizinan.belongsTo(db.detailMatkul, {

@@ -37,7 +37,7 @@ const seeders = require("./app/seeders");
 //   seeders.initialDetailMataKuliah();
 //   seeders.initialJadwal();
 // });
-// db.sequelize.sync({ force: true });
+
 db.sequelize.sync();
 app.get("/", (req, res) => {
   res.json({ message: "Welcome To SLP apps" });

@@ -341,10 +341,22 @@ module.exports = (app) => {
     perizinan.create
   );
 
+  app.post(
+    "/api/mahasiswa/perizinan/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.createDraft
+  );
+
   app.get(
     "/api/mahasiswa/perizinan",
     [authJwt.verifyToken, authJwt.isMahasiswa],
     perizinan.findAll
+  );
+
+  app.get(
+    "/api/mahasiswa/perizinan/list/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.findAllDraft
   );
 
   app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
@@ -366,6 +378,12 @@ module.exports = (app) => {
 */
 
   app.get(
+    "/api/dosenWali/perizinan/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findAllbyDosen
+  );
+
+  app.get(
     "/api/dosenWali/perizinan",
     [authJwt.verifyToken, authJwt.isDosenWali],
     perizinanDosen.findAll
@@ -375,6 +393,12 @@ module.exports = (app) => {
     "/api/dosenWali/perizinan/izin",
     [authJwt.verifyToken, authJwt.isDosenWali],
     perizinanDosen.findIzin
+  );
+
+  app.get(
+    "/api/dosenWali/perizinan/izin/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findIzinbyDosen
   );
 
   app.get(

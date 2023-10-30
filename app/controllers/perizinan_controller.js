@@ -3,13 +3,14 @@ const Perizinan = db.perizinan;
 const DetailMatKul = db.detailMatkul;
 const multer = require("multer");
 const path = require("path");
+const { Op } = require("sequelize");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/"); // The folder where uploaded files will be stored
+    cb(null, "uploads/");
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname); // Rename the file to avoid conflicts
+    cb(null, Date.now() + "-" + file.originalname);
   },
 });
 
@@ -27,7 +28,6 @@ exports.create = (req, res) => {
 
     const random4DigitNumber = Math.floor(1000 + Math.random() * 9000);
     const idss = req.body.nim + random4DigitNumber;
-    let jml_jam = 0;
     const matkulData = req.body.matakuliah;
 
     if (!matkulData || matkulData.length === 0) {
@@ -36,12 +36,9 @@ exports.create = (req, res) => {
       });
     }
 
-    // Pisahkan ID menjadi array menggunakan koma sebagai pemisah
     const matkulIDs = matkulData.split(",");
-    // Inisialisasi array untuk menyimpan hasil
     let promises = [];
 
-    // Loop melalui setiap ID
     matkulIDs.forEach((id) => {
       const promise = DetailMatKul.findAll({
         where: {
@@ -51,14 +48,13 @@ exports.create = (req, res) => {
       promises.push(promise);
     });
 
-    // Gunakan Promise.all untuk menunggu semua promise selesai
     Promise.all(promises)
       .then((results) => {
-        const flattenedResults = [].concat(...results); // Flatten the array of arrays
+        const flattenedResults = [].concat(...results);
         const sks = flattenedResults.map((result) => result.dataValues.sks);
         const tipe = flattenedResults.map((result) => result.dataValues.tipe);
 
-        const perizinanDetails = []; // Inisialisasi array untuk menyimpan data perizinanDetail
+        const perizinanDetails = [];
 
         for (let i = 0; i < matkulIDs.length; i++) {
           const id_detail_matkul = matkulIDs[i];
@@ -90,6 +86,7 @@ exports.create = (req, res) => {
           tanggal_awal: req.body.tanggal_awal,
           tanggal_akhir: req.body.tanggal_akhir,
           nim: req.body.nim,
+          keterangan_dosen: null,
           detailPerizinan: [perizinanDetails],
           id_semester: req.body.id_semester,
         };
@@ -139,10 +136,163 @@ exports.create = (req, res) => {
   });
 };
 
+exports.createDraft = (req, res) => {
+  upload.single("file")(req, res, (err) => {
+    if (err) {
+      return res.status(500).send({
+        message: "File upload failed: " + err.message,
+      });
+    }
+
+    let filePath = null;
+    if (req.file && req.file.filename != null) {
+      filePath = path.join(req.file.filename);
+    }
+
+    const random4DigitNumber = Math.floor(1000 + Math.random() * 9000);
+    const idss = req.body.nim + random4DigitNumber;
+
+    const matkulData = req.body.matakuliah;
+
+    // Check if matkulData is null or empty
+    if (matkulData != null && matkulData !== "") {
+      const matkulIDs = matkulData.split(",");
+      let promises = [];
+
+      matkulIDs.forEach((id) => {
+        const promise = DetailMatKul.findAll({
+          where: {
+            id_detailMatkul: id,
+          },
+        });
+        promises.push(promise);
+      });
+
+      Promise.all(promises)
+        .then((results) => {
+          const flattenedResults = [].concat(...results);
+          const sks = flattenedResults.map((result) => result.dataValues.sks);
+          const tipe = flattenedResults.map((result) => result.dataValues.tipe);
+
+          const perizinanDetails = [];
+
+          for (let i = 0; i < matkulIDs.length; i++) {
+            const id_detail_matkul = matkulIDs[i];
+            const sksValue = sks[i];
+            const tipeValue = tipe[i];
+
+            let jml_jam;
+
+            if (tipeValue === "Teori") {
+              jml_jam = parseInt(sksValue);
+            } else {
+              jml_jam = parseInt(sksValue) * 3;
+            }
+
+            const perizinanDetail = {
+              jumlah_jam: jml_jam,
+              perizinan_id: idss,
+              id_detail_matkul: id_detail_matkul,
+            };
+
+            perizinanDetails.push(perizinanDetail);
+          }
+          const perizinan = {
+            id_perizinan: idss,
+            surat: filePath,
+            jenis: req.body.jenis,
+            status: req.body.status,
+            keterangan: req.body.keterangan,
+            tanggal_awal: req.body.tanggal_awal,
+            tanggal_akhir: req.body.tanggal_akhir,
+            nim: req.body.nim,
+            detailPerizinan: [perizinanDetails],
+            keterangan_dosen: null,
+            id_semester: req.body.id_semester,
+          };
+          if (!perizinan.keterangan) {
+            res.status(400).send({
+              message: "keterangan cannot be empty!",
+            });
+          } else if (!perizinan.tanggal_awal) {
+            res.status(400).send({
+              message: "tanggal_awal cannot be empty!",
+            });
+          } else if (!perizinan.tanggal_akhir) {
+            res.status(400).send({
+              message: "tanggal_akhir cannot be empty!",
+            });
+          }
+          Perizinan.create(perizinan, { include: ["detailPerizinan"] })
+            .then((data) => {
+              res.send(data);
+            })
+            .catch((err) => {
+              res.status(500).send({
+                message:
+                  err.message ||
+                  "Some error occurred while creating the Admin.",
+              });
+            });
+        })
+        .catch((err) => {
+          console.error("Error:", err);
+        });
+    } else {
+      // Handle the case where matkulData is null or empty
+      const perizinan = {
+        id_perizinan: idss,
+        surat: filePath,
+        jenis: req.body.jenis,
+        status: req.body.status,
+        keterangan: req.body.keterangan,
+        tanggal_awal: req.body.tanggal_awal,
+        tanggal_akhir: req.body.tanggal_akhir,
+        nim: req.body.nim,
+        keterangan_dosen: null,
+        id_semester: req.body.id_semester,
+      };
+      Perizinan.create(perizinan)
+        .then((data) => {
+          res.send(data);
+        })
+        .catch((err) => {
+          res.status(500).send({
+            message:
+              err.message || "Some error occurred while creating the Admin.",
+          });
+        });
+    }
+  });
+};
+
 exports.findAll = (req, res) => {
   const userId = req.userId;
   Perizinan.findAll({
-    where: { nim: userId },
+    where: {
+      nim: userId,
+      status: {
+        [Op.not]: "Draft",
+      },
+    },
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Kelas.",
+      });
+    });
+};
+
+exports.findAllDraft = (req, res) => {
+  const userId = req.userId;
+  Perizinan.findAll({
+    where: {
+      nim: userId,
+      status: "Draft",
+    },
   })
     .then((data) => {
       res.send(data);
