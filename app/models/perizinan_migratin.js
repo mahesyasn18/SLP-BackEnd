@@ -24,6 +24,9 @@ module.exports = (sequelize, Sequelize) => {
     tanggal_akhir: {
       type: DataTypes.DATEONLY,
     },
+    keterangan_dosen: {
+      type: DataTypes.STRING,
+    },
   });
   return Perizinan;
 };

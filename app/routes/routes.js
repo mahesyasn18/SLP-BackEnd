@@ -9,7 +9,6 @@ const perizinan = require("../controllers/perizinan_controller");
 const semester = require("../controllers/semester_controller");
 const angkatan = require("../controllers/angkatan_controller");
 const prodi = require("../controllers/prodi_controller");
-const jadwal = require("../controllers/jadwal_controller");
 const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
 const matkul = require("../controllers/mataKuliah_controller");
@@ -187,36 +186,6 @@ module.exports = (app) => {
   );
 
   app.get(
-    "/api/admins/jadwal",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.findAll
-  );
-
-  app.put(
-    "/api/admins/jadwal/update/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.update
-  );
-
-  app.post(
-    "/api/admins/jadwal/create",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.create
-  );
-
-  app.delete(
-    "/api/admins/jadwal/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.delete
-  );
-
-  app.get(
-    "/api/admins/jadwal/:id",
-    [authJwt.verifyToken, authJwt.isAdmin],
-    jadwal.findOne
-  );
-
-  app.get(
     "/api/admins/semester",
     [authJwt.verifyToken, authJwt.isAdmin],
     semester.findAll
@@ -341,10 +310,22 @@ module.exports = (app) => {
     perizinan.create
   );
 
+  app.post(
+    "/api/mahasiswa/perizinan/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.createDraft
+  );
+
   app.get(
     "/api/mahasiswa/perizinan",
     [authJwt.verifyToken, authJwt.isMahasiswa],
     perizinan.findAll
+  );
+
+  app.get(
+    "/api/mahasiswa/perizinan/list/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.findAllDraft
   );
 
   app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
@@ -366,6 +347,12 @@ module.exports = (app) => {
 */
 
   app.get(
+    "/api/dosenWali/perizinan/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findAllbyDosen
+  );
+
+  app.get(
     "/api/dosenWali/perizinan",
     [authJwt.verifyToken, authJwt.isDosenWali],
     perizinanDosen.findAll
@@ -375,6 +362,12 @@ module.exports = (app) => {
     "/api/dosenWali/perizinan/izin",
     [authJwt.verifyToken, authJwt.isDosenWali],
     perizinanDosen.findIzin
+  );
+
+  app.get(
+    "/api/dosenWali/perizinan/izin/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findIzinbyDosen
   );
 
   app.get(

@@ -6,7 +6,6 @@ const initialAngkatan = require("./angkatan_seeders");
 const intialSemester = require("./semester_seeder");
 const initialMataKuliah = require("./mata_kuliah_seeders");
 const initialDetailMataKuliah = require("./detail_mata_kuliah_seeders");
-const initialJadwal = require("./jadwal_matkul_seeders");
 const initialWaliKelas = require("./wali_kelas_seeders");
 
 module.exports = {
@@ -18,6 +17,5 @@ module.exports = {
   intialSemester,
   initialMataKuliah,
   initialDetailMataKuliah,
-  initialJadwal,
   initialWaliKelas,
 };
