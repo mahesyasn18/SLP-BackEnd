@@ -4,7 +4,6 @@ const Jadwal = db.jadwal;
 exports.create = (req, res) => {
   // Create an Jadwal Mata kuliah
   const jadwal = {
-    id_jadwal: req.body.id_jadwal,
     hari: req.body.hari,
     semester_id: req.body.semester_id,
     detailMatkul_id: req.body.detailMatkul_id,
