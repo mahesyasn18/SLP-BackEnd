@@ -307,6 +307,12 @@ module.exports = (app) => {
     mengajar.createMengajar
   );
 
+  app.get(
+    "/api/admins/mengajar",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    mengajar.findAllMengajar
+  );
+
   /* 
   ========================================
   Routes User
