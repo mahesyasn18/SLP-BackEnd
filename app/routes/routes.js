@@ -347,6 +347,11 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isMahasiswa],
     perizinan.findAllDraft
   );
+  app.get(
+    "/api/mahasiswa/list/matkul/mahasiswa/:id_semester/:id_prodi/:id_kelas/:id_angkatan",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    angkatan.findAllAngkatanMatkulperMahasiswa
+  );
 
   app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
     const filename = req.params.filename;
@@ -359,6 +364,12 @@ module.exports = (app) => {
     // Mengirimkan file surat kepada pengguna
     res.sendFile(filePath);
   });
+
+  app.get(
+    "/api/mahasiswa/:id",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    mahasiswa.findOne
+  );
 
   /* 
   ========================================

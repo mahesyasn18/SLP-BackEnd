@@ -60,7 +60,18 @@ exports.findAllAngkatanMatkul = (req, res) => {
 };
 
 exports.findAllAngkatanMatkulperMahasiswa = (req, res) => {
+  const id_semester = req.params.id_semester;
+  const id_prodi = req.params.id_prodi;
+  const id_kelas = req.params.id_kelas;
+  const id_angkatan = req.params.id_angkatan;
+
   db.AngkatanMatkul.findAll({
+    where: {
+      id_semester: id_semester,
+      id_prodi: id_prodi,
+      id_kelas: id_kelas,
+      id_angkatan: id_angkatan,
+    },
     include: [{ model: db.detailMatkul, include: db.matakuliah }],
   })
     .then((data) => {
