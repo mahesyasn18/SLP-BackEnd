@@ -1,6 +1,7 @@
 const { authJwt } = require('../middleware');
 const controller = require('../controllers/admin_controller');
 const admin = require('../controllers/admin_controller');
+const adminDashboard = require('../controllers/admin_dashboard_controller');
 const kelas = require('../controllers/kelas_controller');
 const mahasiswa = require('../controllers/mahasiswa_controller');
 const dosen = require('../controllers/dosen_controller');
@@ -36,6 +37,14 @@ module.exports = (app) => {
 */
 
   app.get('/api/test/admin', [authJwt.verifyToken, authJwt.isAdmin], controller.adminBoard);
+
+  /* 
+    ========================================
+    Routes Dashboard Admins
+    ========================================
+  */
+
+  app.get('/api/test/adminDashboard', [authJwt.verifyToken, authJwt.isAdmin], adminDashboard.findAll);
 
   /* 
   ========================================

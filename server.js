@@ -26,7 +26,7 @@ app.use(
 const db = require('./app/models');
 const seeders = require('./app/seeders');
 // db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and Resync Db");
+//   console.log('Drop and Resync Db');
 //   seeders.initialRole();
 //   seeders.initialAdmin();
 //   seeders.initialKelas();
