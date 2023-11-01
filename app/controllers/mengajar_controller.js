@@ -23,3 +23,25 @@ exports.createMengajar = (req, res) => {
       });
     });
 };
+
+exports.findAllMengajar = (req, res) => {
+  db.Mengajar.findAll({
+    include: [
+      { model: db.dosen },
+      { model: db.prodi },
+      { model: db.kelas },
+      { model: db.detailMatkul, include: db.matakuliah },
+      { model: db.angkatan },
+      { model: db.semester },
+    ],
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving AngkatanMatkul.",
+      });
+    });
+};

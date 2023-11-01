@@ -191,13 +191,29 @@ db.detailMatkul.belongsTo(db.matakuliah, {
 db.dosen.belongsToMany(db.detailMatkul, {
   through: db.Mengajar,
   foreignKey: "id_dosen",
-  otherKey: "id_detail_matkul",
 });
+
+db.Mengajar.belongsTo(db.dosen, {
+  foreignKey: "id_dosen",
+});
+
+db.dosen.hasMany(db.Mengajar, {
+  foreignKey: "id_dosen",
+});
+
 db.detailMatkul.belongsToMany(db.dosen, {
   through: db.Mengajar,
   foreignKey: "id_detail_matkul",
-  otherKey: "id_dosen",
 });
+
+db.Mengajar.belongsTo(db.detailMatkul, {
+  foreignKey: "id_detail_matkul",
+});
+
+db.detailMatkul.hasMany(db.Mengajar, {
+  foreignKey: "id_detail_matkul",
+});
+
 db.semester.hasOne(db.Mengajar, {
   foreignKey: "id_semester",
   onDelete: "RESTRICT",

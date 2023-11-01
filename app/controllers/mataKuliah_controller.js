@@ -19,6 +19,7 @@ exports.create = (req, res) => {
   const matkul = {
     id_matakuliah: req.body.id_matakuliah,
     nama_matakuliah: req.body.nama_matakuliah,
+    semester_matakuliah: req.body.semester_matakuliah,
   };
 
   Matkul.create(matkul)
