@@ -142,6 +142,13 @@ module.exports = (app) => {
 
   app.delete('/api/admins/matkul/:id', [authJwt.verifyToken, authJwt.isAdmin], matkul.delete);
 
+  //angkatan detail matkul
+  app.post('/api/admins/create/angkatan/detailmatkul', [authJwt.verifyToken, authJwt.isAdmin], angkatan.createAngkatanMatkul);
+
+  app.get('/api/admins/jadwal/matkul', [authJwt.verifyToken, authJwt.isAdmin], angkatan.findAllAngkatanMatkul);
+
+  app.post('/api/admins/create/mengajar', [authJwt.verifyToken, authJwt.isAdmin], mengajar.createMengajar);
+
   /* 
   ========================================
   Routes User
