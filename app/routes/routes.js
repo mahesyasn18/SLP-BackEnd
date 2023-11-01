@@ -13,6 +13,7 @@ const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
 const matkul = require("../controllers/mataKuliah_controller");
 const perizinanDosen = require("../controllers/perizinana_dosenWali_controller");
+const mengajar = require("../controllers/mengajar_controller");
 const fileUpload = require("express-fileupload");
 const path = require("path");
 const uploadOpts = {
@@ -285,6 +286,25 @@ module.exports = (app) => {
     "/api/admins/matkul/:id",
     [authJwt.verifyToken, authJwt.isAdmin],
     matkul.delete
+  );
+
+  //angkatan detail matkul
+  app.post(
+    "/api/admins/create/angkatan/detailmatkul",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    angkatan.createAngkatanMatkul
+  );
+
+  app.get(
+    "/api/admins/jadwal/matkul",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    angkatan.findAllAngkatanMatkul
+  );
+
+  app.post(
+    "/api/admins/create/mengajar",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    mengajar.createMengajar
   );
 
   /* 
