@@ -1,5 +1,6 @@
-const db = require("../models");
+const db = require('../models');
 const Angkatan = db.angkatan;
+const angkatandetailMatkul = db.AngkatanMatkul;
 
 exports.findAll = (req, res) => {
   Angkatan.findAll()
@@ -8,8 +9,57 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving Angkatan.",
+        message: err.message || 'Some error occurred while retrieving Angkatan.',
+      });
+    });
+};
+
+exports.createAngkatanMatkul = (req, res) => {
+  // Create an AngkatanMatkul
+  const angkatanMatkul = {
+    id_angkatan: req.body.angkatan_id,
+    id_detail_matkul: req.body.id_detailMatkul,
+    id_semester: req.body.id_semester,
+    id_prodi: req.body.prodi_id,
+    id_kelas: req.body.kelas_id,
+  };
+
+  angkatandetailMatkul
+    .create(angkatanMatkul)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while creating the Mahasiswa.',
+      });
+    });
+};
+
+exports.findAllAngkatanMatkul = (req, res) => {
+  db.AngkatanMatkul.findAll({
+    include: [{ model: db.semester }, { model: db.prodi }, { model: db.kelas }, { model: db.detailMatkul, include: db.matakuliah }, { model: db.angkatan }],
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving AngkatanMatkul.',
+      });
+    });
+};
+
+exports.findAllAngkatanMatkulperMahasiswa = (req, res) => {
+  db.AngkatanMatkul.findAll({
+    include: [{ model: db.detailMatkul, include: db.matakuliah }],
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || 'Some error occurred while retrieving AngkatanMatkul.',
       });
     });
 };
