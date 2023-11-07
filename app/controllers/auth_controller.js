@@ -3,6 +3,7 @@ const config = require("../config/auth.config");
 const Admin = db.admin;
 const Role = db.role;
 const Mahasiswa = db.mahasiswa;
+const Kaprodi = db.Kaprodi;
 const DosenWali = db.dosenWali;
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
@@ -33,12 +34,22 @@ exports.signin = async (req, res) => {
         include: Role,
       });
 
+      const KaprodiUser = await Kaprodi.findOne({
+        where: {
+          username: req.body.username,
+        },
+        include: Role,
+      });
+
       if (!adminUser && mahasiswaUser) {
         user = mahasiswaUser;
         userType = "mahasiswa";
       } else if (!adminUser && dosenWaliUser) {
         user = dosenWaliUser;
         userType = "dosen_wali";
+      } else if (!adminUser && KaprodiUser) {
+        user = KaprodiUser;
+        userType = "kaprodi";
       }
     } else {
     }
@@ -57,7 +68,8 @@ exports.signin = async (req, res) => {
     }
 
     const roleName = user.role ? user.role.name : "";
-    const id = user.admin_id ?? user.nim ?? user.id_dosenwali;
+    const id =
+      user.admin_id ?? user.nim ?? user.id_dosenwali ?? user.id_kaprodi;
     const token = jwt.sign({ id: id, userType }, config.secret, {
       algorithm: "HS256",
       allowInsecureKeySizes: true,
@@ -73,7 +85,6 @@ exports.signin = async (req, res) => {
     return res.status(200).send({
       id: id,
       username: user.username,
-      email: user.email,
       roles: roleName,
       userType: userType,
     });

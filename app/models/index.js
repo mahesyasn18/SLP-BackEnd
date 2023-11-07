@@ -40,6 +40,7 @@ db.AngkatanMatkul = require("./angkatan_detail_matkul_controller.js")(
   Sequelize
 );
 db.Mengajar = require("./mengajar_migration.js")(sequelize, Sequelize);
+db.Kaprodi = require("./kaprodi_mingration.js")(sequelize, Sequelize);
 /* 
   ========================================
   Relation Admin
@@ -307,6 +308,38 @@ db.walikelas.belongsTo(db.dosenWali, {
 
 /* 
   ========================================
+  Relation Kaprodi dan Prodi
+  ========================================
+*/
+
+db.prodi.hasMany(db.Kaprodi, {
+  onDelete: "RESTRICT",
+  foreignKey: "prodi_id",
+});
+db.Kaprodi.belongsTo(db.prodi, {
+  foreignKey: "prodi_id",
+});
+
+db.role.hasOne(db.Kaprodi, {
+  onDelete: "RESTRICT",
+  foreignKey: "role_id",
+});
+
+db.Kaprodi.belongsTo(db.role, {
+  foreignKey: "role_id",
+});
+
+db.dosen.hasOne(db.Kaprodi, {
+  onDelete: "RESTRICT",
+  foreignKey: "dosen_id",
+});
+
+db.Kaprodi.belongsTo(db.dosen, {
+  foreignKey: "dosen_id",
+});
+
+/* 
+  ========================================
   Relation Angkatan dan detail matkul
   ========================================
 */
@@ -358,5 +391,5 @@ db.AngkatanMatkul.belongsTo(db.kelas, {
   foreignKey: "id_kelas",
 });
 
-db.ROLES = ["admin", "mahasiswa", "dosenWali"];
+db.ROLES = ["admin", "mahasiswa", "dosenWali", "kaprodi"];
 module.exports = db;

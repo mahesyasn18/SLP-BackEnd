@@ -1,5 +1,6 @@
 const { authJwt } = require("../middleware");
 const controller = require("../controllers/admin_controller");
+const adminDashboard = require("../controllers/dashboard_admin_controller");
 const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
@@ -13,9 +14,10 @@ const mahasiswa_roles = require("../controllers/mahasiswa_content_controller");
 const detail_matkul = require("../controllers/detailMatkul_controller");
 const matkul = require("../controllers/mataKuliah_controller");
 const perizinanDosen = require("../controllers/perizinana_dosenWali_controller");
-const mengajar = require("../controllers/mengajar_controller");
 const fileUpload = require("express-fileupload");
 const path = require("path");
+const mengajar = require("../controllers/mengajar_controller");
+const kaprodi = require("../controllers/kaprodi_controller");
 const uploadOpts = {
   useTempFiles: true,
   tempFileDir: "/tmp/",
@@ -28,6 +30,18 @@ module.exports = (app) => {
   });
 
   app.get("api/admins", [authJwt.verifyToken, authJwt.isAdmin], admin.findAll);
+
+  /* 
+    ========================================
+    Routes Dashboard Admins
+    ========================================
+  */
+
+  app.get(
+    "/api/test/adminDashboard",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    adminDashboard.findAll
+  );
 
   /* 
   ========================================
@@ -305,6 +319,18 @@ module.exports = (app) => {
     "/api/admins/create/mengajar",
     [authJwt.verifyToken, authJwt.isAdmin],
     mengajar.createMengajar
+  );
+
+  app.post(
+    "/api/admins/create/kaprodi",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    kaprodi.create
+  );
+
+  app.get(
+    "/api/admins/kaprodi",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    kaprodi.findAll
   );
 
   app.get(
