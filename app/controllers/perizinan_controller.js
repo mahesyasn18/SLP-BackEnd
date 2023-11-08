@@ -355,10 +355,24 @@ exports.delete = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Perizinan.findByPk(id)
+  Perizinan.findByPk(id, {
+    include: [db.detailPerizinan],
+  })
     .then((data) => {
       if (data) {
-        res.send(data);
+        data
+          .getDetailPerizinan()
+          .then((detailData) => {
+            data.dataValues.detailPerizinan = [detailData];
+            res.send(data);
+          })
+          .catch((err) => {
+            res.status(500).send({
+              message:
+                "Error retrieving associated DetailPerizinan for Perizinan with id=" +
+                id,
+            });
+          });
       } else {
         res.status(404).send({
           message: `Cannot find Perizinan with id=${id}.`,

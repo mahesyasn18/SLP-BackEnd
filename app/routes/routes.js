@@ -362,6 +362,12 @@ module.exports = (app) => {
     perizinan.create
   );
 
+  app.get(
+    "/api/mahasiswa/perizinan/:id",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.findOne
+  );
+
   app.post(
     "/api/mahasiswa/perizinan/draft",
     [authJwt.verifyToken, authJwt.isMahasiswa],

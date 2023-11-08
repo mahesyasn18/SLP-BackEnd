@@ -4,6 +4,7 @@ const db = require("../models");
 const Admin = db.admin;
 const Mahasiswa = db.mahasiswa;
 const Dosenwali = db.dosenWali;
+const Kaprodi = db.kaprodi;
 
 verifyToken = (req, res, next) => {
   let token = req.session.token;
@@ -103,11 +104,38 @@ isDosenWali = async (req, res, next) => {
   }
 };
 
+isKaprodi = async (req, res, next) => {
+  try {
+    const kaprodi = await Kaprodi.findByPk(req.userId, {
+      include: {
+        model: db.role,
+      },
+    });
+
+    if (!kaprodi) {
+      return res.status(404).send({
+        message: "Dosen Wali not found",
+      });
+    }
+    const userRole = kaprodi.role;
+    if (userRole.name === "dosen_wali") {
+      return next();
+    }
+    return res.status(403).send({
+      message: "Require Dosen Wali Role!",
+    });
+  } catch (error) {
+    return res.status(500).send({
+      message: "Unable to validate Dosen Wali role!",
+    });
+  }
+};
 const authJwt = {
   verifyToken,
   isAdmin,
   isMahasiswa,
   isDosenWali,
+  isKaprodi,
 };
 
 module.exports = authJwt;
