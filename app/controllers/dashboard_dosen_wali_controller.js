@@ -150,7 +150,7 @@ exports.findAll = (req, res) => {
 				} else if (item.jenis === "Izin" && item.status === "Diverifikasi") {
 					dashboardData.jumlahIzin++;
 				}
-				if (item.status === "Menunggu Diverifikasi") {
+				if (item.status === "Menunggu Verifikasi") {
 					dashboardData.totalPermohonan++;
 				}
 			});
