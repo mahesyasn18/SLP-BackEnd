@@ -1,6 +1,7 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
 const DetailMatKul = db.detailMatkul;
+const DetailPerizinan = db.detailPerizinan;
 const multer = require("multer");
 const path = require("path");
 const { Op } = require("sequelize");
@@ -87,7 +88,7 @@ exports.create = (req, res) => {
           tanggal_akhir: req.body.tanggal_akhir,
           nim: req.body.nim,
           keterangan_dosen: null,
-          detailPerizinan: [perizinanDetails],
+          detailPerizinans: perizinanDetails,
           id_semester: req.body.id_semester,
         };
         if (!perizinan.id_perizinan) {
@@ -119,7 +120,7 @@ exports.create = (req, res) => {
             message: "tanggal_akhir cannot be empty!",
           });
         }
-        Perizinan.create(perizinan, { include: ["detailPerizinan"] })
+        Perizinan.create(perizinan, { include: [db.detailPerizinan] })
           .then((data) => {
             res.send(data);
           })
@@ -206,10 +207,11 @@ exports.createDraft = (req, res) => {
             tanggal_awal: req.body.tanggal_awal,
             tanggal_akhir: req.body.tanggal_akhir,
             nim: req.body.nim,
-            detailPerizinan: [perizinanDetails],
+            detailPerizinans: perizinanDetails,
             keterangan_dosen: null,
             id_semester: req.body.id_semester,
           };
+          console.log(perizinan);
           if (!perizinan.keterangan) {
             res.status(400).send({
               message: "keterangan cannot be empty!",
@@ -223,7 +225,7 @@ exports.createDraft = (req, res) => {
               message: "tanggal_akhir cannot be empty!",
             });
           }
-          Perizinan.create(perizinan, { include: ["detailPerizinan"] })
+          Perizinan.create(perizinan, { include: [db.detailPerizinan] })
             .then((data) => {
               res.send(data);
             })
@@ -355,24 +357,16 @@ exports.delete = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Perizinan.findByPk(id, {
-    include: [db.detailPerizinan],
+  Perizinan.findOne({
+    where: { id_perizinan: id },
+    include: {
+      model: db.detailPerizinan,
+      include: { model: db.detailMatkul, include: db.matakuliah }, // Include the detailmatkul relation
+    },
   })
     .then((data) => {
       if (data) {
-        data
-          .getDetailPerizinan()
-          .then((detailData) => {
-            data.dataValues.detailPerizinan = [detailData];
-            res.send(data);
-          })
-          .catch((err) => {
-            res.status(500).send({
-              message:
-                "Error retrieving associated DetailPerizinan for Perizinan with id=" +
-                id,
-            });
-          });
+        res.send(data);
       } else {
         res.status(404).send({
           message: `Cannot find Perizinan with id=${id}.`,

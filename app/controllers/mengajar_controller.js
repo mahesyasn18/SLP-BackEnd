@@ -2,17 +2,31 @@ const db = require("../models");
 const mengajars = db.Mengajar;
 
 exports.createMengajar = (req, res) => {
-  const mengajar = {
-    id_dosen: req.body.id_dosen,
-    id_detail_matkul: req.body.id_detail_matkul,
-    id_semester: req.body.id_semester,
-    angkatan_id: req.body.id_angkatan,
-    kelas_id: req.body.id_prodi,
-    prodi_id: req.body.id_kelas,
-  };
+  const id_detail_matkul = req.body.id_detail_matkul;
+  const id_semester = req.body.id_semester;
+  const angkatan_id = req.body.id_angkatan;
+  const kelas_id = req.body.id_prodi;
+  const prodi_id = req.body.id_kelas;
+  const id_dosenArray = req.body.id_dosen;
 
-  mengajars
-    .create(mengajar)
+  const promises = [];
+
+  // Create a promise for each id_dosen
+  id_dosenArray.forEach((id_dosen) => {
+    const mengajar = {
+      id_dosen,
+      id_detail_matkul,
+      id_semester,
+      angkatan_id,
+      kelas_id,
+      prodi_id,
+    };
+
+    promises.push(mengajars.create(mengajar));
+  });
+
+  // Execute all promises in parallel
+  Promise.all(promises)
     .then((data) => {
       res.send(data);
     })
