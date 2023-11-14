@@ -143,12 +143,17 @@ exports.findAll = (req, res) => {
 				jumlahSakit: 0,
 				jumlahIzin: 0,
 				totalPermohonan: 0,
+				jumlah_sakit_perbulan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				jumlah_izin_perbulan: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 			};
 			data.forEach((item) => {
+				const month = item.createdAt.getMonth();
 				if (item.jenis === "Sakit" && item.status === "Diverifikasi") {
 					dashboardData.jumlahSakit++;
+					dashboardData.jumlah_sakit_perbulan[month]++;
 				} else if (item.jenis === "Izin" && item.status === "Diverifikasi") {
 					dashboardData.jumlahIzin++;
+					dashboardData.jumlah_izin_perbulan[month]++;
 				}
 				if (item.status === "Menunggu Verifikasi") {
 					dashboardData.totalPermohonan++;
