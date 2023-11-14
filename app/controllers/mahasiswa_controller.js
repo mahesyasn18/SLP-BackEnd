@@ -3,8 +3,10 @@ const db = require("../models");
 const Mahasiswa = db.mahasiswa;
 const XLSX = require("xlsx");
 const fs = require("fs");
+const nodemailer = require("nodemailer");
+const { EMAIL, PASSWORD } = require("../../env.js");
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   // Create an mahasiswa
   const mahasiswa = {
     nim: req.body.nim,
@@ -19,8 +21,52 @@ exports.create = (req, res) => {
     angkatan_id: req.body.angkatan_id,
   };
 
+  let config = {
+    service: "gmail",
+    auth: {
+      user: EMAIL,
+      pass: PASSWORD,
+    },
+  };
+
+  let transporter = nodemailer.createTransport(config);
+
+  let message = {
+    from: EMAIL,
+    to: "school.mahesyasn18@gmail.com",
+    subject: "Account Access to Student Leaving Permission",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <p style="font-size: 18px; color: #333;">Hello ${req.body.nama},</p>
+        <p style="font-size: 16px; color: #555;">Here are your account Access:</p>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+          <tr style="background-color: #f2f2f2;">
+            <th style="padding: 10px; border: 1px solid #ddd;">Username</th>
+            <th style="padding: 10px; border: 1px solid #ddd;">Password</th>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">${req.body.nim}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${req.body.password}</td>
+          </tr>
+        </table>
+        <p style="font-size: 16px; color: #555; margin-top: 15px;">Use the provided credentials to sign in and access your account.</p>
+        <p style="font-size: 16px; color: #555;">Best regards,</p>
+        <p style="font-size: 16px; color: #555;">Student Leaving Permission | Jurusan Teknik Komputer dan Informatika</p>
+      </div>
+    `,
+  };
+
   Mahasiswa.create(mahasiswa)
     .then((data) => {
+      // Send email
+      transporter.sendMail(message, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log("Message sent: %s", info.messageId);
+      });
+
+      // Send response to the client
       res.send(data);
     })
     .catch((err) => {
@@ -49,11 +95,20 @@ exports.importExcel = async (req, res) => {
     const successData = [];
     const failureData = [];
 
+    // Create a reusable transporter object using the default SMTP transport
+    let transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: EMAIL,
+        pass: PASSWORD,
+      },
+    });
+
     for (let i = 0; i < data.length; i++) {
       const {
         nim,
         nama,
-        username,
+        email,
         password,
         no_telp,
         no_telp_orang_tua,
@@ -66,7 +121,7 @@ exports.importExcel = async (req, res) => {
       const mahasiswa = {
         nim,
         nama,
-        username,
+        email,
         password,
         no_telp,
         no_telp_orang_tua,
@@ -79,6 +134,41 @@ exports.importExcel = async (req, res) => {
 
       try {
         const createdMahasiswa = await Mahasiswa.create(mahasiswa);
+
+        // Send email for each successfully created Mahasiswa
+        let message = {
+          from: EMAIL,
+          to: email,
+          subject: "Account Access to Student Leaving Permission",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <p style="font-size: 18px; color: #333;">Hello ${nama},</p>
+              <p style="font-size: 16px; color: #555;">Here are your account Access:</p>
+              <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+                <tr style="background-color: #f2f2f2;">
+                  <th style="padding: 10px; border: 1px solid #ddd;">Username</th>
+                  <th style="padding: 10px; border: 1px solid #ddd;">Password</th>
+                </tr>
+                <tr>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${nim}</td>
+                  <td style="padding: 10px; border: 1px solid #ddd;">${password}</td>
+                </tr>
+              </table>
+              <p style="font-size: 16px; color: #555; margin-top: 15px;">Use the provided credentials to sign in and access your account.</p>
+              <p style="font-size: 16px; color: #555;">Best regards,</p>
+              <p style="font-size: 16px; color: #555;">Student Leaving Permission | Jurusan Teknik Komputer dan Informatika</p>
+            </div>
+          `,
+        };
+
+        transporter.sendMail(message, (error, info) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Message sent: %s", info.messageId);
+          }
+        });
+
         successData.push(createdMahasiswa);
       } catch (error) {
         failureData.push({ ...mahasiswa, error: error.message });
