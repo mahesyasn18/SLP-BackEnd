@@ -1,6 +1,7 @@
 const { authJwt } = require("../middleware");
 const controller = require("../controllers/admin_controller");
 const adminDashboard = require("../controllers/dashboard_admin_controller");
+const mahasiswaDashboard = require("../controllers/dashboard_mahasiswa_controller");
 const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
@@ -42,6 +43,31 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isAdmin],
     adminDashboard.findAll
   );
+  app.get(
+    "/api/test/adminDashboard/graph",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    adminDashboard.findAll
+  );
+
+
+ /* 
+    ========================================
+    Routes Dashboard Mahasiswa
+    ========================================
+  */
+
+    app.get(
+      "/api/test/mahasiswaDashboard",
+      [authJwt.verifyToken, authJwt.isMahasiswa],
+      mahasiswaDashboard.findOne
+    );
+  
+    app.get(
+      "/api/test/mahasiswaDashboard/graph",
+      [authJwt.verifyToken, authJwt.isMahasiswa],
+      mahasiswaDashboard.findAll
+    );
+
 
   /* 
   ========================================
