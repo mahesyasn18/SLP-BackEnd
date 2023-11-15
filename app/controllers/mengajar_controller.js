@@ -9,7 +9,7 @@ exports.createMengajar = (req, res) => {
   const kelas_id = req.body.id_prodi;
   const prodi_id = req.body.id_kelas;
   const id_dosenArray = req.body.id_dosen;
-  console.log("aaaa" + id_dosenArray);
+
   const promises = [];
 
   // Create a promise for each id_dosen

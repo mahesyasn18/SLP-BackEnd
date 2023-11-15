@@ -368,6 +368,12 @@ module.exports = (app) => {
     perizinan.findOne
   );
 
+  app.delete(
+    "/api/mahasiswa/perizinan/delete/:id",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.delete
+  );
+
   app.post(
     "/api/mahasiswa/perizinan/draft",
     [authJwt.verifyToken, authJwt.isMahasiswa],

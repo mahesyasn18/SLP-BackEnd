@@ -1,9 +1,15 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
 const DetailMatKul = db.detailMatkul;
+const mahasiswa = db.mahasiswa;
+const dosen = db.dosen;
+const dosenwali = db.dosenWali;
+const DetailPerizinan = db.detailPerizinan;
 const multer = require("multer");
 const path = require("path");
 const { Op } = require("sequelize");
+const nodemailer = require("nodemailer");
+const { EMAIL, PASSWORD } = require("../../env.js");
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -16,8 +22,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-exports.create = (req, res) => {
-  upload.single("file")(req, res, (err) => {
+exports.create = async (req, res) => {
+  upload.single("file")(req, res, async (err) => {
     if (err) {
       return res.status(500).send({
         message: "File upload failed: " + err.message,
@@ -47,6 +53,25 @@ exports.create = (req, res) => {
       });
       promises.push(promise);
     });
+
+    const dataMhs = await mahasiswa.findOne({
+      where: {
+        nim: req.body.nim,
+      },
+    });
+
+    console.log(dataMhs);
+    const dosenwali_id = dataMhs.dataValues.walidosen_id;
+    console.log("Dosenwali ID:", dosenwali_id);
+
+    const data_dosen = await dosenwali.findOne({
+      where: {
+        id_dosenwali: dosenwali_id,
+      },
+      include: dosen,
+    });
+
+    console.log(data_dosen);
 
     Promise.all(promises)
       .then((results) => {
@@ -87,7 +112,7 @@ exports.create = (req, res) => {
           tanggal_akhir: req.body.tanggal_akhir,
           nim: req.body.nim,
           keterangan_dosen: null,
-          detailPerizinan: [perizinanDetails],
+          detailPerizinans: perizinanDetails,
           id_semester: req.body.id_semester,
         };
         if (!perizinan.id_perizinan) {
@@ -119,8 +144,65 @@ exports.create = (req, res) => {
             message: "tanggal_akhir cannot be empty!",
           });
         }
-        Perizinan.create(perizinan, { include: ["detailPerizinan"] })
+
+        let config = {
+          service: "gmail",
+          auth: {
+            user: EMAIL,
+            pass: PASSWORD,
+          },
+        };
+
+        let transporter = nodemailer.createTransport(config);
+
+        let message = {
+          from: EMAIL,
+          to: data_dosen.dataValues.dosen.email,
+          subject:
+            "Pemberitahuan Perizinan " +
+            req.body.jenis +
+            " Baru dari Mahasiswa",
+          html: `
+            <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+              <div style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                <h2 style="color: #333;">Pemberitahuan Perizinan ${
+                  req.body.jenis
+                } Baru</h2>
+                <p style="margin-bottom: 15px;">Halo ${
+                  data_dosen.dataValues.dosen.nama_dosen
+                },</p>
+                <p style="margin-bottom: 15px;">Ada permintaan perizinan ${
+                  req.body.jenis
+                } baru dari mahasiswa:</p>
+                <p style="margin-bottom: 15px; font-weight: bold;">Nama Mahasiswa: ${
+                  dataMhs.dataValues.nama
+                }</p>
+                <p style="margin-bottom: 15px;">Alasan: ${
+                  req.body.keterangan
+                }</p>
+                <p style="margin-top: 15px;">Silakan klik link di bawah untuk melihat detail perizinan:</p>
+                <a href="${
+                  req.body.jenis == "Sakit"
+                    ? "http://localhost:3000/table/rekap/sakit"
+                    : "http://localhost:3000/table/rekap/izin"
+                }" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px;">
+                  Detail Perizinan
+                </a>
+                <p style="margin-top: 20px;">Terima kasih,</p>
+                <p style="font-weight: bold;">Student Leaving Permision</p>
+              </div>
+            </div>
+          `,
+        };
+
+        Perizinan.create(perizinan, { include: [db.detailPerizinan] })
           .then((data) => {
+            transporter.sendMail(message, (error, info) => {
+              if (error) {
+                return console.log(error);
+              }
+              console.log("Message sent: %s", info.messageId);
+            });
             res.send(data);
           })
           .catch((err) => {
@@ -206,10 +288,11 @@ exports.createDraft = (req, res) => {
             tanggal_awal: req.body.tanggal_awal,
             tanggal_akhir: req.body.tanggal_akhir,
             nim: req.body.nim,
-            detailPerizinan: [perizinanDetails],
+            detailPerizinans: perizinanDetails,
             keterangan_dosen: null,
             id_semester: req.body.id_semester,
           };
+          console.log(perizinan);
           if (!perizinan.keterangan) {
             res.status(400).send({
               message: "keterangan cannot be empty!",
@@ -223,7 +306,7 @@ exports.createDraft = (req, res) => {
               message: "tanggal_akhir cannot be empty!",
             });
           }
-          Perizinan.create(perizinan, { include: ["detailPerizinan"] })
+          Perizinan.create(perizinan, { include: [db.detailPerizinan] })
             .then((data) => {
               res.send(data);
             })
@@ -355,24 +438,16 @@ exports.delete = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Perizinan.findByPk(id, {
-    include: [db.detailPerizinan],
+  Perizinan.findOne({
+    where: { id_perizinan: id },
+    include: {
+      model: db.detailPerizinan,
+      include: { model: db.detailMatkul, include: db.matakuliah }, // Include the detailmatkul relation
+    },
   })
     .then((data) => {
       if (data) {
-        data
-          .getDetailPerizinan()
-          .then((detailData) => {
-            data.dataValues.detailPerizinan = [detailData];
-            res.send(data);
-          })
-          .catch((err) => {
-            res.status(500).send({
-              message:
-                "Error retrieving associated DetailPerizinan for Perizinan with id=" +
-                id,
-            });
-          });
+        res.send(data);
       } else {
         res.status(404).send({
           message: `Cannot find Perizinan with id=${id}.`,

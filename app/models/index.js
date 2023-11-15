@@ -274,7 +274,8 @@ db.perizinan.belongsTo(db.semester, {
   ========================================
 */
 //detail perizinan dan mahasiswa
-db.perizinan.hasOne(db.detailPerizinan, {
+db.perizinan.hasMany(db.detailPerizinan, {
+  onDelete: "CASCADE",
   foreignKey: "perizinan_id",
 });
 db.detailPerizinan.belongsTo(db.perizinan, {
