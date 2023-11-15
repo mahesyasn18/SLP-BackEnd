@@ -40,9 +40,14 @@ module.exports = (app) => {
   app.get(
     "/api/test/adminDashboard",
     [authJwt.verifyToken, authJwt.isAdmin],
-    adminDashboard.findAll
+    adminDashboard.findOne
   );
 
+  app.get(
+    "/api/test/adminDashboard/graph",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    adminDashboard.findAll
+  );
   /* 
   ========================================
   Routes Admins
