@@ -1,8 +1,11 @@
 const db = require("../models");
 const Dosen_Wali = db.dosenWali;
 const mahasiswa = db.mahasiswa;
+const dosen = db.dosen;
+const nodemailer = require("nodemailer");
+const { EMAIL, PASSWORD } = require("../../env.js");
 
-exports.create = (req, res) => {
+exports.create = async (req, res) => {
   if (
     !req.body.username ||
     !req.body.password ||
@@ -18,6 +21,17 @@ exports.create = (req, res) => {
     return;
   }
 
+  const dosen_id = req.body.dosen_id;
+  console.log("Dosen ID:", dosen_id);
+
+  const data_dosen = await dosen.findOne({
+    where: {
+      kode_dosen: dosen_id,
+    },
+  });
+
+  console.log(data_dosen);
+
   const dosen_wali = {
     id_dosenwali: req.body.angkatan_id + req.body.dosen_id + req.body.kelas_id,
     username: req.body.username,
@@ -29,9 +43,51 @@ exports.create = (req, res) => {
     angkatan_id: req.body.angkatan_id,
   };
 
+  let config = {
+    service: "gmail",
+    auth: {
+      user: EMAIL,
+      pass: PASSWORD,
+    },
+  };
+
+  let transporter = nodemailer.createTransport(config);
+
+  let message = {
+    from: EMAIL,
+    to: data_dosen.dataValues.email,
+    subject: "Account Access to Student Leaving Permission",
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <p style="font-size: 18px; color: #333;">Hello ${data_dosen.dataValues.nama_dosen},</p>
+        <p style="font-size: 16px; color: #555;">Here are your account Access:</p>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+          <tr style="background-color: #f2f2f2;">
+            <th style="padding: 10px; border: 1px solid #ddd;">Username</th>
+            <th style="padding: 10px; border: 1px solid #ddd;">Password</th>
+          </tr>
+          <tr>
+            <td style="padding: 10px; border: 1px solid #ddd;">${req.body.username}</td>
+            <td style="padding: 10px; border: 1px solid #ddd;">${req.body.password}</td>
+          </tr>
+        </table>
+        <p style="font-size: 16px; color: #555; margin-top: 15px;">Use the provided credentials to sign in and access your account.</p>
+        <p style="font-size: 16px; color: #555;">Best regards,</p>
+        <p style="font-size: 16px; color: #555;">Student Leaving Permission | Jurusan Teknik Komputer dan Informatika</p>
+      </div>
+    `,
+  };
+
   // First, create the Dosen Wali
   Dosen_Wali.create(dosen_wali)
     .then((data) => {
+      transporter.sendMail(message, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log("Message sent: %s", info.messageId);
+      });
+
       // Now, update the Mahasiswa fields
       return mahasiswa.update(
         {
