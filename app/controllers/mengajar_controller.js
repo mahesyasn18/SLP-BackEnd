@@ -1,5 +1,6 @@
 const db = require("../models");
 const mengajars = db.Mengajar;
+const Dosen = db.dosen;
 
 exports.createMengajar = (req, res) => {
   const id_matkulmengajar = req.body.id_detail_matkul;
