@@ -239,10 +239,10 @@ db.detailPerizinan.belongsTo(db.perizinan, {
 });
 
 //detail perizinan dan detail matkul
-db.detailMatkul.hasOne(db.AngkatanMatkul, {
+db.AngkatanMatkul.hasOne(db.detailPerizinan, {
   foreignKey: "id_detail_matkul",
 });
-db.AngkatanMatkul.belongsTo(db.detailMatkul, {
+db.detailPerizinan.belongsTo(db.AngkatanMatkul, {
   foreignKey: "id_detail_matkul",
 });
 
