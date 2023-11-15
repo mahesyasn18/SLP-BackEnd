@@ -503,6 +503,24 @@ module.exports = (app) => {
 	app.get(
 		"/api/test/dosenWaliDashboard/count/:walidosen_id",
 		[authJwt.verifyToken, authJwt.isDosenWali],
-		dosenWaliDashboard.findAll
+		dosenWaliDashboard.getMahasiswaJumlahSakitIzin
+	);
+
+	app.get(
+		"/api/test/dosenWaliDashboard/countsakitizin/:walidosen_id",
+		[authJwt.verifyToken, authJwt.isDosenWali],
+		dosenWaliDashboard.getMahasiswaJumlahSakitIzin
+	);
+
+	app.get(
+		"/api/test/dosenWaliDashboard/namasakitizinhariini/:walidosen_id",
+		[authJwt.verifyToken, authJwt.isDosenWali],
+		dosenWaliDashboard.getMahasiswaIzinSakitHariIni
+	);
+
+	app.get(
+		"/api/test/dosenWaliDashboard/getmatkul/:walidosen_id",
+		[authJwt.verifyToken, authJwt.isDosenWali],
+		dosenWaliDashboard.get_Matkul
 	);
 };
