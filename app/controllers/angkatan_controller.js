@@ -84,3 +84,23 @@ exports.findAllAngkatanMatkulperMahasiswa = (req, res) => {
       });
     });
 };
+
+exports.findAllAngkatanMatkulperMahasiswaSelected = (req, res) => {
+  const angkatanMatkul_id = req.params.angkatanMatkul_id;
+
+  db.AngkatanMatkul.findAll({
+    where: {
+      angkatanMatkul_id: angkatanMatkul_id,
+    },
+    include: [{ model: db.detailMatkul, include: db.matakuliah }],
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving AngkatanMatkul.",
+      });
+    });
+};

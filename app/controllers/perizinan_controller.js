@@ -226,8 +226,8 @@ exports.create = async (req, res) => {
   });
 };
 
-exports.createDraft = (req, res) => {
-  upload.single("file")(req, res, (err) => {
+exports.createDraft = async (req, res) => {
+  upload.single("file")(req, res, async (err) => {
     if (err) {
       return res.status(500).send({
         message: "File upload failed: " + err.message,
@@ -250,19 +250,44 @@ exports.createDraft = (req, res) => {
       let promises = [];
 
       matkulIDs.forEach((id) => {
-        const promise = DetailMatKul.findAll({
+        const promise = db.AngkatanMatkul.findAll({
           where: {
-            id_detailMatkul: id,
+            angkatanMatkul_id: id,
           },
+          include: [
+            {
+              model: db.detailMatkul,
+              include: [db.matakuliah], // Adjust the association according to your model structure
+            },
+          ],
         });
         promises.push(promise);
       });
 
+      const dataMhs = await mahasiswa.findOne({
+        where: {
+          nim: req.body.nim,
+        },
+      });
+      console.log(dataMhs);
+      const dosenwali_id = dataMhs.dataValues.walidosen_id;
+      console.log("Dosenwali ID:", dosenwali_id);
+
+      const data_dosen = await dosenwali.findOne({
+        where: {
+          id_dosenwali: dosenwali_id,
+        },
+        include: dosen,
+      });
+
       Promise.all(promises)
+
         .then((results) => {
           const flattenedResults = [].concat(...results);
-          const sks = flattenedResults.map((result) => result.dataValues.sks);
-          const tipe = flattenedResults.map((result) => result.dataValues.tipe);
+          const sks = flattenedResults.map((result) => result.detailMatkul.sks);
+          const tipe = flattenedResults.map(
+            (result) => result.detailMatkul.tipe
+          );
 
           const perizinanDetails = [];
 
@@ -350,7 +375,8 @@ exports.createDraft = (req, res) => {
         .catch((err) => {
           res.status(500).send({
             message:
-              err.message || "Some error occurred while creating the Admin.",
+              err.message ||
+              "Some error occurred while creating the Perizinan.",
           });
         });
     }
@@ -395,28 +421,224 @@ exports.findAllDraft = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {
-  const id = req.params.id;
+exports.update = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const perizinan = await Perizinan.findByPk(id, {
+      include: [DetailPerizinan],
+    });
 
-  Perizinan.update(req.body, {
-    where: { id_perizinan: id },
-  })
-    .then((num) => {
-      if (num == 1) {
-        res.send({
-          message: "Perizinan was updated successfully.",
-        });
-      } else {
-        res.send({
-          message: `Cannot update Perizinan with id=${id}. Maybe Perizinan was not found or req.body is empty!`,
+    if (!perizinan) {
+      return res.status(404).send({
+        message: `Perizinan with id=${id} not found.`,
+      });
+    }
+
+    // Check if the perizinan is a draft
+    if (perizinan.status !== "Draft") {
+      return res.status(400).send({
+        message: `Perizinan with id=${id} cannot be updated because it is not a draft.`,
+      });
+    }
+
+    // Handle file upload
+    upload.single("file")(req, res, async (err) => {
+      if (err) {
+        return res.status(500).send({
+          message: "File upload failed: " + err.message,
         });
       }
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: "Error updating Mahasiswa with id=" + id,
-      });
+
+      let filePath = perizinan.surat ?? null;
+      if (req.file && req.file.filename != null) {
+        filePath = path.join(req.file.filename);
+      }
+
+      const matkulData = req.body.matakuliah;
+
+      // Handle the case where matkulData is null or empty
+      if (matkulData != null && matkulData !== "") {
+        const matkulIDs = matkulData.split(",");
+        let promises = [];
+
+        matkulIDs.forEach((id) => {
+          const promise = db.AngkatanMatkul.findAll({
+            where: {
+              angkatanMatkul_id: id,
+            },
+            include: [
+              {
+                model: db.detailMatkul,
+                include: [db.matakuliah], // Adjust the association according to your model structure
+              },
+            ],
+          });
+          promises.push(promise);
+        });
+
+        const dataMhs = await mahasiswa.findOne({
+          where: {
+            nim: req.body.nim,
+          },
+        });
+
+        console.log(dataMhs);
+        const dosenwali_id = dataMhs.dataValues.walidosen_id;
+        console.log("Dosenwali ID:", dosenwali_id);
+
+        const data_dosen = await dosenwali.findOne({
+          where: {
+            id_dosenwali: dosenwali_id,
+          },
+          include: dosen,
+        });
+
+        console.log(data_dosen);
+
+        Promise.all(promises)
+          .then(async (results) => {
+            const flattenedResults = [].concat(...results);
+            const sks = flattenedResults.map(
+              (result) => result.detailMatkul.sks
+            );
+            const tipe = flattenedResults.map(
+              (result) => result.detailMatkul.tipe
+            );
+
+            const perizinanDetails = [];
+
+            for (let i = 0; i < matkulIDs.length; i++) {
+              const id_detail_matkul = matkulIDs[i];
+              const sksValue = sks[i];
+              const tipeValue = tipe[i];
+
+              let jml_jam;
+
+              if (tipeValue === "Teori") {
+                jml_jam = parseInt(sksValue);
+              } else {
+                jml_jam = parseInt(sksValue) * 3;
+              }
+
+              const perizinanDetail = {
+                jumlah_jam: jml_jam,
+                perizinan_id: id,
+                id_detail_matkul: id_detail_matkul,
+              };
+
+              perizinanDetails.push(perizinanDetail);
+            }
+
+            // Update perizinan data
+            perizinan.surat = filePath;
+            perizinan.keterangan = req.body.keterangan;
+            perizinan.tanggal_awal = req.body.tanggal_awal;
+            perizinan.tanggal_akhir = req.body.tanggal_akhir;
+            perizinan.nim = req.body.nim;
+            perizinan.status = req.body.status;
+            perizinan.jenis = req.body.jenis;
+            perizinan.id_semester = req.body.id_semester;
+
+            // Update perizinan details
+            await DetailPerizinan.destroy({ where: { perizinan_id: id } });
+            await DetailPerizinan.bulkCreate(perizinanDetails);
+
+            // Save the updated perizinan
+            await perizinan.save();
+            let config = {
+              service: "gmail",
+              auth: {
+                user: EMAIL,
+                pass: PASSWORD,
+              },
+            };
+
+            let transporter = nodemailer.createTransport(config);
+
+            let message = {
+              from: EMAIL,
+              to: data_dosen.dataValues.dosen.email,
+              subject:
+                "Pemberitahuan Perizinan " +
+                req.body.jenis +
+                " Baru dari Mahasiswa",
+              html: `
+                <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+                  <div style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                    <h2 style="color: #333;">Pemberitahuan Perizinan ${
+                      req.body.jenis
+                    } Baru</h2>
+                    <p style="margin-bottom: 15px;">Halo ${
+                      data_dosen.dataValues.dosen.nama_dosen
+                    },</p>
+                    <p style="margin-bottom: 15px;">Ada permintaan perizinan ${
+                      req.body.jenis
+                    } baru dari mahasiswa:</p>
+                    <p style="margin-bottom: 15px; font-weight: bold;">Nama Mahasiswa: ${
+                      dataMhs.dataValues.nama
+                    }</p>
+                    <p style="margin-bottom: 15px;">Alasan: ${
+                      req.body.keterangan
+                    }</p>
+                    <p style="margin-top: 15px;">Silakan klik link di bawah untuk melihat detail perizinan:</p>
+                    <a href="${
+                      req.body.jenis == "Sakit"
+                        ? "http://localhost:3000/table/rekap/sakit"
+                        : "http://localhost:3000/table/rekap/izin"
+                    }" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; margin-top: 10px;">
+                      Detail Perizinan
+                    </a>
+                    <p style="margin-top: 20px;">Terima kasih,</p>
+                    <p style="font-weight: bold;">Student Leaving Permision</p>
+                  </div>
+                </div>
+              `,
+            };
+            if (req.body.status == "Menunggu Verifikasi") {
+              transporter.sendMail(message, (error, info) => {
+                if (error) {
+                  return console.log(error);
+                }
+                console.log("Message sent: %s", info.messageId);
+              });
+            }
+
+            res.send({
+              message: "Perizinan was updated successfully.",
+              updatedPerizinan: perizinan,
+            });
+          })
+          .catch((err) => {
+            console.error("Error:", err);
+          });
+      } else {
+        // Handle the case where matkulData is null or empty
+        // Update perizinan data without updating details
+        perizinan.surat = filePath;
+        perizinan.keterangan = req.body.keterangan;
+        perizinan.tanggal_awal = req.body.tanggal_awal;
+        perizinan.tanggal_akhir = req.body.tanggal_akhir;
+        perizinan.nim = req.body.nim;
+        perizinan.status = req.body.status;
+        perizinan.jenis = req.body.jenis;
+        perizinan.id_semester = req.body.id_semester;
+
+        // Save the updated perizinan
+        await perizinan.save();
+
+        res.send({
+          message: "Perizinan was updated successfully.",
+          updatedPerizinan: perizinan,
+        });
+      }
     });
+  } catch (error) {
+    console.error("Error updating Perizinan:", error);
+    res.status(500).send({
+      message: "Internal server error while updating Perizinan.",
+      error: error.message,
+    });
+  }
 };
 
 exports.delete = (req, res) => {
@@ -450,7 +672,16 @@ exports.findOne = (req, res) => {
     where: { id_perizinan: id },
     include: {
       model: db.detailPerizinan,
-      include: { model: db.detailMatkul, include: db.matakuliah }, // Include the detailmatkul relation
+      include: [
+        {
+          model: db.AngkatanMatkul,
+          include: [
+            {
+              model: db.detailMatkul,
+            },
+          ],
+        },
+      ],
     },
   })
     .then((data) => {
