@@ -189,63 +189,19 @@ db.detailMatkul.belongsTo(db.matakuliah, {
   ========================================
 */
 
-db.dosen.belongsToMany(db.detailMatkul, {
-  through: db.Mengajar,
-  foreignKey: "id_dosen",
-});
-
 db.Mengajar.belongsTo(db.dosen, {
   foreignKey: "id_dosen",
 });
-
 db.dosen.hasMany(db.Mengajar, {
   foreignKey: "id_dosen",
 });
-
-db.detailMatkul.belongsToMany(db.dosen, {
-  through: db.Mengajar,
-  foreignKey: "id_detail_matkul",
+db.Mengajar.belongsTo(db.AngkatanMatkul, {
+  foreignKey: "id_matkulmengajar",
+});
+db.AngkatanMatkul.hasMany(db.Mengajar, {
+  foreignKey: "id_matkulmengajar",
 });
 
-db.Mengajar.belongsTo(db.detailMatkul, {
-  foreignKey: "id_detail_matkul",
-});
-
-db.detailMatkul.hasMany(db.Mengajar, {
-  foreignKey: "id_detail_matkul",
-});
-
-db.semester.hasOne(db.Mengajar, {
-  foreignKey: "id_semester",
-  onDelete: "RESTRICT",
-});
-db.Mengajar.belongsTo(db.semester, {
-  foreignKey: "id_semester",
-});
-
-db.angkatan.hasMany(db.Mengajar, {
-  onDelete: "RESTRICT",
-  foreignKey: "angkatan_id",
-});
-db.Mengajar.belongsTo(db.angkatan, {
-  foreignKey: "angkatan_id",
-});
-
-db.kelas.hasMany(db.Mengajar, {
-  onDelete: "RESTRICT",
-  foreignKey: "kelas_id",
-});
-db.Mengajar.belongsTo(db.kelas, {
-  foreignKey: "kelas_id",
-});
-
-db.prodi.hasMany(db.Mengajar, {
-  onDelete: "RESTRICT",
-  foreignKey: "prodi_id",
-});
-db.Mengajar.belongsTo(db.prodi, {
-  foreignKey: "prodi_id",
-});
 /* 
   ========================================
   Relation perizinan
@@ -283,10 +239,10 @@ db.detailPerizinan.belongsTo(db.perizinan, {
 });
 
 //detail perizinan dan detail matkul
-db.detailMatkul.hasOne(db.detailPerizinan, {
+db.AngkatanMatkul.hasOne(db.detailPerizinan, {
   foreignKey: "id_detail_matkul",
 });
-db.detailPerizinan.belongsTo(db.detailMatkul, {
+db.detailPerizinan.belongsTo(db.AngkatanMatkul, {
   foreignKey: "id_detail_matkul",
 });
 
@@ -344,16 +300,6 @@ db.Kaprodi.belongsTo(db.dosen, {
   Relation Angkatan dan detail matkul
   ========================================
 */
-
-db.angkatan.belongsToMany(db.detailMatkul, {
-  through: db.AngkatanMatkul,
-  foreignKey: "id_angkatan",
-});
-
-db.detailMatkul.belongsToMany(db.angkatan, {
-  through: db.AngkatanMatkul,
-  foreignKey: "id_detail_matkul",
-});
 
 db.AngkatanMatkul.belongsTo(db.angkatan, {
   foreignKey: "id_angkatan",
