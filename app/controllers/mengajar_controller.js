@@ -2,24 +2,17 @@ const db = require("../models");
 const mengajars = db.Mengajar;
 
 exports.createMengajar = (req, res) => {
-  const id_detail_matkul = req.body.id_detail_matkul;
-  const id_semester = req.body.id_semester;
-  const angkatan_id = req.body.id_angkatan;
-  const kelas_id = req.body.id_prodi;
-  const prodi_id = req.body.id_kelas;
+  const id_matkulmengajar = req.body.id_detail_matkul;
   const id_dosenArray = req.body.id_dosen;
 
   const promises = [];
 
   // Create a promise for each id_dosen
+
   id_dosenArray.forEach((id_dosen) => {
     const mengajar = {
       id_dosen,
-      id_detail_matkul,
-      id_semester,
-      angkatan_id,
-      kelas_id,
-      prodi_id,
+      id_matkulmengajar,
     };
 
     promises.push(mengajars.create(mengajar));
@@ -42,11 +35,31 @@ exports.findAllMengajar = (req, res) => {
   db.Mengajar.findAll({
     include: [
       { model: db.dosen },
-      { model: db.prodi },
-      { model: db.kelas },
-      { model: db.detailMatkul, include: db.matakuliah },
-      { model: db.angkatan },
-      { model: db.semester },
+      {
+        model: db.AngkatanMatkul,
+        include: [
+          {
+            model: db.angkatan,
+          },
+          {
+            model: db.prodi,
+          },
+          {
+            model: db.kelas,
+          },
+          {
+            model: db.semester,
+          },
+          {
+            model: db.detailMatkul,
+            include: [
+              {
+                model: db.matakuliah,
+              },
+            ],
+          },
+        ],
+      },
     ],
   })
     .then((data) => {

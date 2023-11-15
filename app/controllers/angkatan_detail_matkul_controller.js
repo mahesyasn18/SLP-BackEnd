@@ -28,13 +28,9 @@ exports.create = async (req, res) => {
       .status(201)
       .json({ message: "Data telah ditambahkan ke tabel AngkatanMatkul." });
   } catch (error) {
-    // Handle error jika terjadi kesalahan
-    res
-      .status(500)
-      .json({
-        error:
-          "Terjadi kesalahan saat menambahkan data ke tabel AngkatanMatkul.",
-      });
+    res.status(500).json({
+      error: "Terjadi kesalahan saat menambahkan data ke tabel AngkatanMatkul.",
+    });
   }
 };
 

@@ -399,13 +399,16 @@ module.exports = (app) => {
 
   app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
     const filename = req.params.filename;
-    const filePath = path.join(
-      "D:/study/Polban/Semester3/7. Proyek 3/SLP-BackEnd/",
-      "uploads",
-      filename
-    );
 
-    // Mengirimkan file surat kepada pengguna
+    // Using __dirname to get the current directory of the script
+    const initialDirectory = __dirname;
+
+    // Navigating up two levels (..) to go out of the 'routes' and 'app' folders
+    const parentDirectory = path.join(initialDirectory, "..", "..");
+
+    const filePath = path.join(parentDirectory, "uploads", filename);
+
+    // Sending the file to the user
     res.sendFile(filePath);
   });
 

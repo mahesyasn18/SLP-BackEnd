@@ -30,6 +30,8 @@ exports.create = async (req, res) => {
       });
     }
 
+    console.log(req.body);
+
     const filePath = path.join(req.file.filename);
 
     const random4DigitNumber = Math.floor(1000 + Math.random() * 9000);
@@ -46,10 +48,16 @@ exports.create = async (req, res) => {
     let promises = [];
 
     matkulIDs.forEach((id) => {
-      const promise = DetailMatKul.findAll({
+      const promise = db.AngkatanMatkul.findAll({
         where: {
-          id_detailMatkul: id,
+          angkatanMatkul_id: id,
         },
+        include: [
+          {
+            model: db.detailMatkul,
+            include: [db.matakuliah], // Adjust the association according to your model structure
+          },
+        ],
       });
       promises.push(promise);
     });
@@ -76,8 +84,8 @@ exports.create = async (req, res) => {
     Promise.all(promises)
       .then((results) => {
         const flattenedResults = [].concat(...results);
-        const sks = flattenedResults.map((result) => result.dataValues.sks);
-        const tipe = flattenedResults.map((result) => result.dataValues.tipe);
+        const sks = flattenedResults.map((result) => result.detailMatkul.sks);
+        const tipe = flattenedResults.map((result) => result.detailMatkul.tipe);
 
         const perizinanDetails = [];
 
