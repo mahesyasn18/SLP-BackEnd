@@ -174,7 +174,7 @@ exports.update = async (req, res) => {
   //     message:
   //       "Hai " +
   //       nama_mhs +
-  //       "\nData Perizinan mu sudah dikonfirmasi!" +
+  //       "\nData Perizinanmu sudah dikonfirmasi!" +
   //       "\n" +
   //       "\n" +
   //       "ID Perizinan :" +
@@ -240,7 +240,7 @@ exports.update = async (req, res) => {
   //     message:
   //       "Hai " +
   //       nama_mhs +
-  //       "\nData Perizinan mu sudah Ditolak Oleh Wali Dosen!" +
+  //       "\nData Perizinanmu Ditolak Oleh Wali Dosen!" +
   //       "\n" +
   //       "\n" +
   //       "ID Perizinan :" +
@@ -251,7 +251,7 @@ exports.update = async (req, res) => {
   //       tanggal_awal +
   //       "\nTanggal Akhir Perizinan :" +
   //       tanggal_akhir +
-  //       "Keterangan Walidosen: " +
+  //       "\nKeterangan Walidosen: " +
   //       " masi kosong nunggu opic" +
   //       "\n\n\nStudent Leaving Permission | JTK 2BD3",
   //   };
@@ -276,7 +276,7 @@ exports.update = async (req, res) => {
   //       tanggal_awal +
   //       "\nTanggal Akhir Perizinan :" +
   //       tanggal_akhir +
-  //       "Keterangan Walidosen: " +
+  //       "\nKeterangan Walidosen: " +
   //       " masi kosong nunggu opic" +
   //       "\n\n\nStudent Leaving Permission | JTK 2BD3",
   //   };
