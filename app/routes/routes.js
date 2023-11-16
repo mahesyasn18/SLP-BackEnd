@@ -179,6 +179,8 @@ module.exports = (app) => {
 
   app.get('/api/mahasiswa/perizinan', [authJwt.verifyToken, authJwt.isMahasiswa], perizinan.findAll);
 
+  app.put('/api/mahasiswa/perizinan/:id', [authJwt.verifyToken, authJwt.isMahasiswa], perizinan.update);
+
   app.get('/api/mahasiswa/perizinan/list/draft', [authJwt.verifyToken, authJwt.isMahasiswa], perizinan.findAllDraft);
   app.get('/api/mahasiswa/list/matkul/mahasiswa/:id_semester/:id_prodi/:id_kelas/:id_angkatan', [authJwt.verifyToken, authJwt.isMahasiswa], angkatan.findAllAngkatanMatkulperMahasiswa);
 

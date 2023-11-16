@@ -33,7 +33,7 @@ exports.create = async (req, res) => {
 
   let message = {
     from: EMAIL,
-    to: "school.mahesyasn18@gmail.com",
+    to: req.body.username,
     subject: "Account Access to Student Leaving Permission",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
