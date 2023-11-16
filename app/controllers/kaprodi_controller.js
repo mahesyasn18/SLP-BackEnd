@@ -1,22 +1,16 @@
-const db = require("../models");
+const db = require('../models');
 const Kaprodi = db.Kaprodi;
 
 exports.create = (req, res) => {
-  if (
-    !req.body.username ||
-    !req.body.password ||
-    !req.body.role_id ||
-    !req.body.dosen_id ||
-    !req.body.prodi_id
-  ) {
+  if (!req.body.username || !req.body.password || !req.body.role_id || !req.body.dosen_id || !req.body.prodi_id) {
     res.status(400).send({
-      message: "Please provide all the required fields.",
+      message: 'Please provide all the required fields.',
     });
     return;
   }
 
   const kaprodi = {
-    id_kaprodi: "kap-" + req.body.dosen_id + req.body.prodi_id,
+    id_kaprodi: 'kap-' + req.body.dosen_id + req.body.prodi_id,
     username: req.body.username,
     password: req.body.password,
     role_id: req.body.role_id,
@@ -27,13 +21,11 @@ exports.create = (req, res) => {
   // First, create the Kaprodi
   Kaprodi.create(kaprodi)
     .then(() => {
-      res.send("Kaprodi created and Mahasiswa fields updated successfully.");
+      res.send('Kaprodi created and Mahasiswa fields updated successfully.');
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while creating the Kaprodi and updating Mahasiswa fields.",
+        message: err.message || 'Some error occurred while creating the Kaprodi and updating Mahasiswa fields.',
       });
     });
 };
@@ -47,7 +39,27 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the Admin.",
+        message: err.message || 'Some error occurred while creating the Admin.',
+      });
+    });
+};
+
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  Kaprodi.findByPk(id)
+    .then((data) => {
+      if (data) {
+        res.send(data);
+      } else {
+        res.status(404).send({
+          message: `Cannot find Kaprodi with id=${id}.`,
+        });
+      }
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: 'Error retrieving Kaprodi with id=' + id,
       });
     });
 };

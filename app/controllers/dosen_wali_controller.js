@@ -1,19 +1,11 @@
-const db = require("../models");
+const db = require('../models');
 const Dosen_Wali = db.dosenWali;
 const mahasiswa = db.mahasiswa;
 
 exports.create = (req, res) => {
-  if (
-    !req.body.username ||
-    !req.body.password ||
-    !req.body.role_id ||
-    !req.body.dosen_id ||
-    !req.body.prodi_id ||
-    !req.body.kelas_id ||
-    !req.body.angkatan_id
-  ) {
+  if (!req.body.username || !req.body.password || !req.body.role_id || !req.body.dosen_id || !req.body.prodi_id || !req.body.kelas_id || !req.body.angkatan_id) {
     res.status(400).send({
-      message: "Please provide all the required fields.",
+      message: 'Please provide all the required fields.',
     });
     return;
   }
@@ -35,8 +27,7 @@ exports.create = (req, res) => {
       // Now, update the Mahasiswa fields
       return mahasiswa.update(
         {
-          walidosen_id:
-            req.body.angkatan_id + req.body.dosen_id + req.body.kelas_id,
+          walidosen_id: req.body.angkatan_id + req.body.dosen_id + req.body.kelas_id,
         },
         {
           where: {
@@ -48,13 +39,11 @@ exports.create = (req, res) => {
       );
     })
     .then(() => {
-      res.send("Dosen Wali created and Mahasiswa fields updated successfully.");
+      res.send('Dosen Wali created and Mahasiswa fields updated successfully.');
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message ||
-          "Some error occurred while creating the Dosen Wali and updating Mahasiswa fields.",
+        message: err.message || 'Some error occurred while creating the Dosen Wali and updating Mahasiswa fields.',
       });
     });
 };
@@ -68,7 +57,7 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while creating the Admin.",
+        message: err.message || 'Some error occurred while creating the Admin.',
       });
     });
 };
@@ -82,7 +71,7 @@ exports.update = (req, res) => {
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Dosen Wali was updated successfully.",
+          message: 'Dosen Wali was updated successfully.',
         });
       } else {
         res.send({
@@ -106,7 +95,7 @@ exports.delete = (req, res) => {
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Dosen Wali was deleted successfully!",
+          message: 'Dosen Wali was deleted successfully!',
         });
       } else {
         res.send({
