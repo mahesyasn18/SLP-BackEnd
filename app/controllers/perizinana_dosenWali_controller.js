@@ -1,6 +1,7 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
 const nodemailer = require("nodemailer");
+const { Op } = require("sequelize");
 const { EMAIL, PASSWORD } = require("../../env.js");
 
 exports.findAll = (req, res) => {
@@ -26,6 +27,11 @@ exports.findAllbyDosen = (req, res) => {
         },
       },
     ],
+    where: {
+      status: {
+        [Op.not]: "Draft",
+      },
+    },
   })
     .then((data) => {
       res.send(data);
