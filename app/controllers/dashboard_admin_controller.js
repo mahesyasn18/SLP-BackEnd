@@ -57,4 +57,6 @@ exports.findAll = (req, res) => {
         message: err.message || "Some error occurred while retrieving data.",
       });
     });
+    console.log('Perizinan Data:', perizinanData);
+console.log('Semester Data:', semesterData);
 };
