@@ -35,6 +35,12 @@ exports.findAll = (req, res) => {
         jumlahSakit: 0,
         jumlahIzin: 0,
         tahun_akademik: null,
+        graphData: {
+          jumlah_sakit_semester_ganjil: [],
+          jumlah_izin_semester_ganjil: [],
+          jumlah_sakit_semester_genap: [],
+          jumlah_izin_semester_genap: [],
+        },
       };
 
       perizinanData.forEach((item) => {
@@ -50,6 +56,18 @@ exports.findAll = (req, res) => {
         dashboardData.tahun_akademik = semesterData[0].nama_semester;
       }
 
+      // Prepare graph data
+      perizinanData.forEach((item) => {
+        const semesterType = item.semester.type.toLowerCase();
+        const graphData = dashboardData.graphData;
+
+        if (item.jenis === "Sakit") {
+          graphData[`jumlah_sakit_semester_${semesterType}`].push(item.someValue); // Replace someValue with the actual property in your Perizinan model
+        } else if (item.jenis === "Izin") {
+          graphData[`jumlah_izin_semester_${semesterType}`].push(item.someValue); // Replace someValue with the actual property in your Perizinan model
+        }
+      });
+
       res.send(dashboardData);
     })
     .catch((err) => {
@@ -57,6 +75,4 @@ exports.findAll = (req, res) => {
         message: err.message || "Some error occurred while retrieving data.",
       });
     });
-    console.log('Perizinan Data:', perizinanData);
-console.log('Semester Data:', semesterData);
 };
