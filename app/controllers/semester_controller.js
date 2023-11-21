@@ -1,5 +1,6 @@
 const db = require("../models");
 const Semester = db.semester;
+const { Op } = require("sequelize");
 
 exports.create = (req, res) => {
   const semester = {
@@ -46,18 +47,43 @@ exports.findAll = (req, res) => {
 
 exports.update = (req, res) => {
   const id = req.params.id;
+  const { status_semester } = req.body;
 
-  Semester.update(req.body, {
-    where: { id_semester: id },
-  })
+  if (status_semester === 1) {
+    // Jika status semester yang diaktifkan adalah 1, maka nonaktifkan semester yang lain
+    Semester.update(
+      { status_semester: 0 },
+      {
+        where: {
+          id_semester: {
+            [Op.not]: id, // Memastikan id semester yang diaktifkan tidak diubah statusnya
+          },
+        },
+      }
+    )
+      .then((num) => {
+        console.log(`Deactivated ${num} semesters`);
+      })
+      .catch((err) => {
+        console.error("Error deactivating semesters:", err);
+      });
+  }
+
+  // Mengupdate status semester yang dipilih
+  Semester.update(
+    { status_semester },
+    {
+      where: { id_semester: id },
+    }
+  )
     .then((num) => {
       if (num == 1) {
         res.send({
-          message: "Perizinan was updated successfully.",
+          message: "Semester was updated successfully.",
         });
       } else {
         res.send({
-          message: `Cannot update Perizinan with id=${id}. Maybe Semester was not found or req.body is empty!`,
+          message: `Cannot update Semester with id=${id}. Maybe Semester was not found or req.body is empty!`,
         });
       }
     })
