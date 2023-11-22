@@ -472,6 +472,12 @@ module.exports = (app) => {
   );
 
   app.get(
+    "/api/dosenWali/mahasiswas/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    perizinanDosen.findAllbyMhs
+  );
+
+  app.get(
     "/api/dosenWali/perizinan/sakit",
     [authJwt.verifyToken, authJwt.isDosenWali],
     perizinanDosen.findSakits

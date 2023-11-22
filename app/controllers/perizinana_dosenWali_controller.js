@@ -1,7 +1,7 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
 const nodemailer = require("nodemailer");
-const { Op } = require("sequelize");
+const { Op, Sequelize } = require("sequelize");
 const { EMAIL, PASSWORD } = require("../../env.js");
 
 exports.findAll = (req, res) => {
@@ -26,6 +26,9 @@ exports.findAllbyDosen = (req, res) => {
           walidosen_id: walidosen_id,
         },
       },
+      {
+        model: db.detailPerizinan,
+      },
     ],
     where: {
       status: {
@@ -39,6 +42,58 @@ exports.findAllbyDosen = (req, res) => {
     .catch((err) => {
       res.status(500).send({
         message: err.message || "Some error occurred while retrieving Kelas.",
+      });
+    });
+};
+
+exports.findAllbyMhs = (req, res) => {
+  const walidosen_id = req.params.walidosen_id;
+  Perizinan.findAll({
+    include: [
+      {
+        model: db.mahasiswa,
+        where: {
+          walidosen_id: walidosen_id,
+        },
+      },
+      {
+        model: db.detailPerizinan,
+        // Make sure this alias matches your association configuration
+      },
+    ],
+    where: {
+      status: {
+        [Op.not]: "Draft",
+      },
+    },
+    attributes: [
+      [
+        Sequelize.fn(
+          "SUM",
+          Sequelize.literal(
+            "CASE WHEN perizinan.jenis = 'Sakit' THEN perizinan.detailPerizinan.jumlah_jam ELSE 0 END"
+          )
+        ),
+        "totalJamSakit",
+      ],
+      [
+        Sequelize.fn(
+          "SUM",
+          Sequelize.literal(
+            "CASE WHEN perizinan.jenis = 'Izin' THEN perizinan.detailPerizinan.jumlah_jam ELSE 0 END"
+          )
+        ),
+        "totalJamIzin",
+      ],
+    ],
+    group: ["mahasiswa.nim"],
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: err.message || "Some error occurred while retrieving data.",
       });
     });
 };
