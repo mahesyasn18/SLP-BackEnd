@@ -6,7 +6,7 @@ exports.create = (req, res) => {
   const semester = {
     id_semester: req.body.id_semester,
     nama_semester: req.body.nama_semester,
-    status_semester: 1,
+    status_semester: 0,
   };
 
   if (!req.body.id_semester) {
