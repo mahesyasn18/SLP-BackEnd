@@ -1,6 +1,7 @@
 const { authJwt } = require("../middleware");
 const controller = require("../controllers/admin_controller");
 const adminDashboard = require("../controllers/dashboard_admin_controller");
+const dosenWaliDashboard = require("../controllers/dashboard_dosen_wali_controller");
 const admin = require("../controllers/admin_controller");
 const kelas = require("../controllers/kelas_controller");
 const mahasiswa = require("../controllers/mahasiswa_controller");
@@ -49,6 +50,13 @@ module.exports = (app) => {
     adminDashboard.findAll
   );
   /* 
+	app.get(
+		"/api/test/adminDashboard",
+		[authJwt.verifyToken, authJwt.isAdmin],
+		adminDashboard.findAll
+	);
+
+	/* 
   ========================================
   Routes Admins
   ========================================
@@ -384,6 +392,11 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isMahasiswa],
     perizinan.createDraft
   );
+  app.post(
+    "/api/mahasiswa/perizinan/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.createDraft
+  );
 
   app.get(
     "/api/mahasiswa/perizinan",
@@ -426,6 +439,28 @@ module.exports = (app) => {
     const filePath = path.join(parentDirectory, "uploads", filename);
 
     // Sending the file to the user
+    res.sendFile(filePath);
+  });
+  app.get(
+    "/api/mahasiswa/perizinan/list/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.findAllDraft
+  );
+  app.get(
+    "/api/mahasiswa/list/matkul/mahasiswa/:id_semester/:id_prodi/:id_kelas/:id_angkatan",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    angkatan.findAllAngkatanMatkulperMahasiswa
+  );
+
+  app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(
+      "D:/study/Polban/Semester3/7. Proyek 3/SLP-BackEnd/",
+      "uploads",
+      filename
+    );
+
+    // Mengirimkan file surat kepada pengguna
     res.sendFile(filePath);
   });
 
@@ -500,4 +535,52 @@ module.exports = (app) => {
     // Mengirimkan file surat kepada pengguna
     res.sendFile(filePath);
   });
+
+  /* 
+  ========================================
+  Routes Dashboard Dosen Wali
+  ========================================
+*/
+
+  app.get(
+    "/api/test/dosenWaliDashboard/countizin/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    dosenWaliDashboard.countIzinbyDosen
+  );
+
+  app.get(
+    "/api/test/dosenWaliDashboard/countsakit/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    dosenWaliDashboard.countSakitbyDosen
+  );
+
+  app.get(
+    "/api/test/dosenWaliDashboard/counttotalPermohonan/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    dosenWaliDashboard.totalPermohonanbyDosen
+  );
+
+  app.get(
+    "/api/test/dosenWaliDashboard/count/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    dosenWaliDashboard.getMahasiswaJumlahSakitIzin
+  );
+
+  app.get(
+    "/api/test/dosenWaliDashboard/countsakitizin/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    dosenWaliDashboard.getMahasiswaJumlahSakitIzin
+  );
+
+  app.get(
+    "/api/test/dosenWaliDashboard/namasakitizinhariini/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    dosenWaliDashboard.getMahasiswaIzinSakitHariIni
+  );
+
+  app.get(
+    "/api/test/dosenWaliDashboard/getmatkul/:walidosen_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    dosenWaliDashboard.get_Matkul
+  );
 };
