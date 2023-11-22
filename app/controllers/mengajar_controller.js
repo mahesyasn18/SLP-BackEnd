@@ -50,6 +50,7 @@ exports.findAllMengajar = (req, res) => {
           },
           {
             model: db.semester,
+            where: { status_semester: 1 }, // Menambahkan kondisi status_semester
           },
           {
             model: db.detailMatkul,
@@ -64,7 +65,12 @@ exports.findAllMengajar = (req, res) => {
     ],
   })
     .then((data) => {
-      res.send(data);
+      // Filter data yang memiliki status_semester: 1
+      const filteredData = data.filter(
+        (item) => item?.angkatan_detail_matkul?.semester?.status_semester === 1
+      );
+
+      res.send(filteredData);
     })
     .catch((err) => {
       res.status(500).send({

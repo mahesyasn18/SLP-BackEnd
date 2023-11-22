@@ -49,7 +49,10 @@ exports.findAllAngkatanMatkul = (req, res) => {
     ],
   })
     .then((data) => {
-      res.send(data);
+      const filteredData = data.filter(
+        (item) => item?.semester?.status_semester === 1
+      );
+      res.send(filteredData);
     })
     .catch((err) => {
       res.status(500).send({
