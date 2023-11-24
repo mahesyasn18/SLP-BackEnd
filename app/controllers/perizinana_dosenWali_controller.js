@@ -1,5 +1,7 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
+const Mahasiswa = db.mahasiswa;
+const detailPerizinan = db.detailPerizinan;
 const nodemailer = require("nodemailer");
 const { Op } = require("sequelize");
 const { EMAIL, PASSWORD } = require("../../env.js");
@@ -224,6 +226,7 @@ exports.update = async (req, res) => {
     let jenis = dataperizinan.jenis;
     let tanggal_awal = dataperizinan.tanggal_awal;
     let tanggal_akhir = dataperizinan.tanggal_akhir;
+    let keterangan_dosen = dataperizinan.keterangan_dosen;
     async function sendFonnte(data) {
       const url = "https://api.fonnte.com/send";
 
@@ -243,21 +246,22 @@ exports.update = async (req, res) => {
       target: no_telp_mhs,
       message:
         "Hai " +
-        nama_mhs +
-        "\nData Perizinanmu Ditolak Oleh Wali Dosen!" +
-        "\n" +
-        "\n" +
-        "ID Perizinan :" +
-        id_perizinan +
-        "\nJenis Perizinan :" +
-        jenis +
-        "\nTanggal Awal Perizinan :" +
-        tanggal_awal +
-        "\nTanggal Akhir Perizinan :" +
-        tanggal_akhir +
-        "\nKeterangan Walidosen: " +
-        " " +
-        "\n\n\nStudent Leaving Permission | JTK 2BD3",
+          nama_mhs +
+          "\nData Perizinanmu Ditolak Oleh Wali Dosen!" +
+          "\n" +
+          "\n" +
+          "ID Perizinan :" +
+          id_perizinan +
+          "\nJenis Perizinan :" +
+          jenis +
+          "\nTanggal Awal Perizinan :" +
+          tanggal_awal +
+          "\nTanggal Akhir Perizinan :" +
+          tanggal_akhir +
+          "\nKeterangan Walidosen: " +
+          " " +
+          req.body.keterangan_dosen ??
+        "-" + "\n\n\nStudent Leaving Permission | JTK 2BD3",
     };
     sendFonnte(datamhs);
     console.log(datamhs);
@@ -266,23 +270,24 @@ exports.update = async (req, res) => {
       target: no_telp_ortu,
       message:
         "Hai Orang Tua dari " +
-        nama_mhs +
-        "\nData Perizinan Ananda " +
-        nama_mhs +
-        " Ditolak Oleh Wali Dosen!" +
-        "\n" +
-        "\n" +
-        "ID Perizinan :" +
-        id_perizinan +
-        "\nJenis Perizinan :" +
-        jenis +
-        "\nTanggal Awal Perizinan :" +
-        tanggal_awal +
-        "\nTanggal Akhir Perizinan :" +
-        tanggal_akhir +
-        "\nKeterangan Walidosen: " +
-        "" +
-        "\n\n\nStudent Leaving Permission | JTK 2BD3",
+          nama_mhs +
+          "\nData Perizinan Ananda " +
+          nama_mhs +
+          " Ditolak Oleh Wali Dosen!" +
+          "\n" +
+          "\n" +
+          "ID Perizinan :" +
+          id_perizinan +
+          "\nJenis Perizinan :" +
+          jenis +
+          "\nTanggal Awal Perizinan :" +
+          tanggal_awal +
+          "\nTanggal Akhir Perizinan :" +
+          tanggal_akhir +
+          "\nKeterangan Walidosen: " +
+          "" +
+          req.body.keterangan_dosen ??
+        "-" + "\n\n\nStudent Leaving Permission | JTK 2BD3",
     };
     sendFonnte(dataORTU);
     console.log(datamhs);

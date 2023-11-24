@@ -20,6 +20,8 @@ const fileUpload = require("express-fileupload");
 const path = require("path");
 const mengajar = require("../controllers/mengajar_controller");
 const kaprodi = require("../controllers/kaprodi_controller");
+const kaprodiDashboard = require("../controllers/dashboard_kaprodi_controller");
+const { Kaprodi } = require("../models");
 const uploadOpts = {
   useTempFiles: true,
   tempFileDir: "/tmp/",
@@ -417,6 +419,11 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isMahasiswa],
     perizinan.createDraft
   );
+  app.post(
+    "/api/mahasiswa/perizinan/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.createDraft
+  );
 
   app.get(
     "/api/mahasiswa/perizinan",
@@ -434,12 +441,6 @@ module.exports = (app) => {
     "/api/mahasiswa/perizinan/list/draft",
     [authJwt.verifyToken, authJwt.isMahasiswa],
     perizinan.findAllDraft
-  );
-
-  app.get(
-    "/api/mahasiswa/detailMatkul/:angkatanMatkul_id",
-    [authJwt.verifyToken, authJwt.isMahasiswa],
-    angkatan.findAllAngkatanMatkulperMahasiswaSelected
   );
   app.get(
     "/api/mahasiswa/list/matkul/mahasiswa/:id_semester/:id_prodi/:id_kelas/:id_angkatan",
@@ -459,6 +460,28 @@ module.exports = (app) => {
     const filePath = path.join(parentDirectory, "uploads", filename);
 
     // Sending the file to the user
+    res.sendFile(filePath);
+  });
+  app.get(
+    "/api/mahasiswa/perizinan/list/draft",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    perizinan.findAllDraft
+  );
+  app.get(
+    "/api/mahasiswa/list/matkul/mahasiswa/:id_semester/:id_prodi/:id_kelas/:id_angkatan",
+    [authJwt.verifyToken, authJwt.isMahasiswa],
+    angkatan.findAllAngkatanMatkulperMahasiswa
+  );
+
+  app.get("/api/mahasiswa/perizinan/surat/:filename", (req, res) => {
+    const filename = req.params.filename;
+    const filePath = path.join(
+      "D:/study/Polban/Semester3/7. Proyek 3/SLP-BackEnd/",
+      "uploads",
+      filename
+    );
+
+    // Mengirimkan file surat kepada pengguna
     res.sendFile(filePath);
   });
   app.get(
@@ -519,7 +542,16 @@ module.exports = (app) => {
     [authJwt.verifyToken, authJwt.isDosenWali],
     perizinanDosen.findIzinbyDosen
   );
-
+  app.get(
+    "/api/dosenWali/mahasiswa/rekap",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    mahasiswa.findAll
+  );
+  app.get(
+    "/api/dosenWali/perizinan/rekap/:dosenwali_id",
+    [authJwt.verifyToken, authJwt.isDosenWali],
+    mahasiswa.getSakitIzinMhs
+  );
   app.get(
     "/api/dosenWali/mahasiswa/:dosenwali_id",
     [authJwt.verifyToken, authJwt.isDosenWali],
@@ -555,6 +587,24 @@ module.exports = (app) => {
     // Mengirimkan file surat kepada pengguna
     res.sendFile(filePath);
   });
+
+  /* 
+    ========================================
+    Routes Dashboard Admins
+    ========================================
+  */
+
+  app.get(
+    "/api/kaprodiDashboard/card/:prodi_id",
+    [authJwt.verifyToken, authJwt.isKaprodi],
+    kaprodiDashboard.findDataCard
+  );
+
+  app.get(
+    "/api/kaprodiDashboard/graph/:prodi_id",
+    [authJwt.verifyToken, authJwt.isKaprodi],
+    kaprodiDashboard.findDataGraph
+  );
 
   /* 
   ========================================

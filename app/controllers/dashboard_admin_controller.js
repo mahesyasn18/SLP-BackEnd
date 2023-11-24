@@ -1,4 +1,4 @@
-const db = require("../models");
+const db = require('../models');
 const Perizinan = db.perizinan;
 const Semester = db.semester;
 
@@ -8,7 +8,7 @@ exports.findOne = (req, res) => {
   // Membuat Promise untuk mengambil data Perizinan
   const fetchPerizinan = Perizinan.findAll({
     where: {
-      status: "Diverifikasi",
+      status: 'Diverifikasi',
     },
     include: [
       {
@@ -40,10 +40,10 @@ exports.findOne = (req, res) => {
       perizinanData.forEach((item) => {
         // Mendapatkan bulan dari createdAt
         const createdAt = new Date(item.createdAt);
-        const month = createdAt.toLocaleString("default", { month: "long" });
-        if (item.jenis === "Sakit") {
+        const month = createdAt.toLocaleString('default', { month: 'long' });
+        if (item.jenis === 'Sakit') {
           dashboardData.jumlahSakit++;
-        } else if (item.jenis === "Izin") {
+        } else if (item.jenis === 'Izin') {
           dashboardData.jumlahIzin++;
         }
       });
@@ -57,7 +57,7 @@ exports.findOne = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving data.",
+        message: err.message || 'Some error occurred while retrieving data.',
       });
     });
 };
@@ -114,14 +114,14 @@ exports.findAll = (req, res) => {
       };
       data.forEach((item) => {
         const month = item.createdAt.getMonth();
-        if (item.jenis === "Sakit" && item.status === "Diverifikasi") {
+        if (item.jenis === 'Sakit' && item.status === 'Diverifikasi') {
           dashboardData.jumlahSakit++;
           dashboardData.jumlah_sakit_perbulan[month]++;
-        } else if (item.jenis === "Izin" && item.status === "Diverifikasi") {
+        } else if (item.jenis === 'Izin' && item.status === 'Diverifikasi') {
           dashboardData.jumlahIzin++;
           dashboardData.jumlah_izin_perbulan[month]++;
         }
-        if (item.status === "Menunggu Verifikasi") {
+        if (item.status === 'Menunggu Verifikasi') {
           dashboardData.totalPermohonan++;
         }
       });
@@ -129,7 +129,7 @@ exports.findAll = (req, res) => {
     })
     .catch((err) => {
       res.status(500).send({
-        message: err.message || "Some error occurred while retrieving Kelas.",
+        message: err.message || 'Some error occurred while retrieving Kelas.',
       });
     });
 };
