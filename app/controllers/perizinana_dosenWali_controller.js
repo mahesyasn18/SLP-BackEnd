@@ -119,179 +119,179 @@ exports.update = async (req, res) => {
     html: "",
   };
 
-  if (req.body.status == "Diverifikasi") {
-    for (const mengajar of datamengajar) {
-      console.log("Data Mengajar:", mengajar.toJSON());
-      message.to = mengajar.dosen.email;
-      message.subject =
-        "Pemberitahuan Perizinan " +
-        dataperizinan.jenis +
-        " Baru dari Mahasiswa";
-      message.html = `
-      <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-      <div style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <h2 style="color: #333;">Pemberitahuan Perizinan ${dataperizinan.jenis} Baru</h2>
-        <p style="margin-bottom: 15px;">Halo ${mengajar.dosen.nama_dosen},</p>
-        <p style="margin-bottom: 15px;">Terdapat Mahasiswa  ${dataperizinan.jenis} baru dari mahasiswa:</p>
-        <p style="margin-bottom: 15px; font-weight: bold;">Nama Mahasiswa: ${dataperizinan.mahasiswa.nama}</p>
-        <p style="margin-bottom: 15px; font-weight: bold;">NIM: ${dataperizinan.mahasiswa.nim}</p>
-        <p style="margin-bottom: 15px; font-weight: bold;">Matakuliah: ${mengajar.angkatan_detail_matkul.detailMatkul.mataKuliah.nama_matakuliah}</p>
-        <p style="margin-bottom: 15px; font-weight: bold;">Alasan: ${dataperizinan.keterangan}</p>
+  // if (req.body.status == "Diverifikasi") {
+  //   for (const mengajar of datamengajar) {
+  //     console.log("Data Mengajar:", mengajar.toJSON());
+  //     message.to = mengajar.dosen.email;
+  //     message.subject =
+  //       "Pemberitahuan Perizinan " +
+  //       dataperizinan.jenis +
+  //       " Baru dari Mahasiswa";
+  //     message.html = `
+  //     <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+  //     <div style="background-color: #ffffff; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+  //       <h2 style="color: #333;">Pemberitahuan Perizinan ${dataperizinan.jenis} Baru</h2>
+  //       <p style="margin-bottom: 15px;">Halo ${mengajar.dosen.nama_dosen},</p>
+  //       <p style="margin-bottom: 15px;">Terdapat Mahasiswa  ${dataperizinan.jenis} baru dari mahasiswa:</p>
+  //       <p style="margin-bottom: 15px; font-weight: bold;">Nama Mahasiswa: ${dataperizinan.mahasiswa.nama}</p>
+  //       <p style="margin-bottom: 15px; font-weight: bold;">NIM: ${dataperizinan.mahasiswa.nim}</p>
+  //       <p style="margin-bottom: 15px; font-weight: bold;">Matakuliah: ${mengajar.angkatan_detail_matkul.detailMatkul.mataKuliah.nama_matakuliah}</p>
+  //       <p style="margin-bottom: 15px; font-weight: bold;">Alasan: ${dataperizinan.keterangan}</p>
 
-        <p style="margin-top: 20px;">Terima kasih,</p>
-        <p style="font-weight: bold;">Student Leaving Permission</p>
-      </div>
-    </div>
-      `;
+  //       <p style="margin-top: 20px;">Terima kasih,</p>
+  //       <p style="font-weight: bold;">Student Leaving Permission</p>
+  //     </div>
+  //   </div>
+  //     `;
 
-      // Send the email inside the loop if needed
-      transporter.sendMail(message, (error, info) => {
-        if (error) {
-          return console.log(error);
-        }
-        console.log("Message sent: %s", info.messageId);
-      });
-    }
+  //     // Send the email inside the loop if needed
+  //     transporter.sendMail(message, (error, info) => {
+  //       if (error) {
+  //         return console.log(error);
+  //       }
+  //       console.log("Message sent: %s", info.messageId);
+  //     });
+  //   }
 
-    let no_telp_ortu = dataperizinan.mahasiswa.no_telp_orang_tua;
-    let no_telp_mhs = dataperizinan.mahasiswa.no_telp;
-    let nama_mhs = dataperizinan.mahasiswa.nama;
-    let id_perizinan = dataperizinan.id_perizinan;
-    let jenis = dataperizinan.jenis;
-    let tanggal_awal = dataperizinan.tanggal_awal;
-    let tanggal_akhir = dataperizinan.tanggal_akhir;
-    async function sendFonnte(data) {
-      const url = "https://api.fonnte.com/send";
+  //   let no_telp_ortu = dataperizinan.mahasiswa.no_telp_orang_tua;
+  //   let no_telp_mhs = dataperizinan.mahasiswa.no_telp;
+  //   let nama_mhs = dataperizinan.mahasiswa.nama;
+  //   let id_perizinan = dataperizinan.id_perizinan;
+  //   let jenis = dataperizinan.jenis;
+  //   let tanggal_awal = dataperizinan.tanggal_awal;
+  //   let tanggal_akhir = dataperizinan.tanggal_akhir;
+  //   async function sendFonnte(data) {
+  //     const url = "https://api.fonnte.com/send";
 
-      const customHeaders = {
-        "Content-Type": "application/json",
-        Authorization: "3m2C@EGb1xj5d0N2Iqis",
-      };
+  //     const customHeaders = {
+  //       "Content-Type": "application/json",
+  //       Authorization: "3m2C@EGb1xj5d0N2Iqis",
+  //     };
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: customHeaders,
-        body: JSON.stringify(data),
-      });
-      console.log(await response.json());
-    }
-    const datamhs = {
-      target: no_telp_mhs,
-      message:
-        "Hai " +
-        nama_mhs +
-        "\nData Perizinanmu sudah dikonfirmasi!" +
-        "\n" +
-        "\n" +
-        "ID Perizinan :" +
-        id_perizinan +
-        "\nJenis Perizinan :" +
-        jenis +
-        "\nTanggal Awal Perizinan :" +
-        tanggal_awal +
-        "\nTanggal Akhir Perizinan :" +
-        tanggal_akhir +
-        "\nStudent Leaving Permission | JTK 2BD3",
-    };
-    sendFonnte(datamhs);
-    console.log(datamhs);
+  //     const response = await fetch(url, {
+  //       method: "POST",
+  //       headers: customHeaders,
+  //       body: JSON.stringify(data),
+  //     });
+  //     console.log(await response.json());
+  //   }
+  //   const datamhs = {
+  //     target: no_telp_mhs,
+  //     message:
+  //       "Hai " +
+  //       nama_mhs +
+  //       "\nData Perizinanmu sudah dikonfirmasi!" +
+  //       "\n" +
+  //       "\n" +
+  //       "ID Perizinan :" +
+  //       id_perizinan +
+  //       "\nJenis Perizinan :" +
+  //       jenis +
+  //       "\nTanggal Awal Perizinan :" +
+  //       tanggal_awal +
+  //       "\nTanggal Akhir Perizinan :" +
+  //       tanggal_akhir +
+  //       "\nStudent Leaving Permission | JTK 2BD3",
+  //   };
+  //   sendFonnte(datamhs);
+  //   console.log(datamhs);
 
-    const dataORTU = {
-      target: no_telp_ortu,
-      message:
-        "Hai Orang Tua dari " +
-        nama_mhs +
-        "\nData Perizinan Ananda " +
-        nama_mhs +
-        " sudah dikonfirmasi!" +
-        "\n" +
-        "\n" +
-        "ID Perizinan :" +
-        id_perizinan +
-        "\nJenis Perizinan :" +
-        jenis +
-        "\nTanggal Awal Perizinan :" +
-        tanggal_awal +
-        "\nTanggal Akhir Perizinan :" +
-        tanggal_akhir +
-        "\n\n\nStudent Leaving Permission | JTK 2BD3",
-    };
-    sendFonnte(dataORTU);
-    console.log(datamhs);
-  } else {
-    let no_telp_ortu = dataperizinan.mahasiswa.no_telp_orang_tua;
-    let no_telp_mhs = dataperizinan.mahasiswa.no_telp;
-    let nama_mhs = dataperizinan.mahasiswa.nama;
-    let id_perizinan = dataperizinan.id_perizinan;
-    let jenis = dataperizinan.jenis;
-    let tanggal_awal = dataperizinan.tanggal_awal;
-    let tanggal_akhir = dataperizinan.tanggal_akhir;
-    let keterangan_dosen = dataperizinan.keterangan_dosen;
-    async function sendFonnte(data) {
-      const url = "https://api.fonnte.com/send";
+  //   const dataORTU = {
+  //     target: no_telp_ortu,
+  //     message:
+  //       "Hai Orang Tua dari " +
+  //       nama_mhs +
+  //       "\nData Perizinan Ananda " +
+  //       nama_mhs +
+  //       " sudah dikonfirmasi!" +
+  //       "\n" +
+  //       "\n" +
+  //       "ID Perizinan :" +
+  //       id_perizinan +
+  //       "\nJenis Perizinan :" +
+  //       jenis +
+  //       "\nTanggal Awal Perizinan :" +
+  //       tanggal_awal +
+  //       "\nTanggal Akhir Perizinan :" +
+  //       tanggal_akhir +
+  //       "\n\n\nStudent Leaving Permission | JTK 2BD3",
+  //   };
+  //   sendFonnte(dataORTU);
+  //   console.log(datamhs);
+  // } else {
+  //   let no_telp_ortu = dataperizinan.mahasiswa.no_telp_orang_tua;
+  //   let no_telp_mhs = dataperizinan.mahasiswa.no_telp;
+  //   let nama_mhs = dataperizinan.mahasiswa.nama;
+  //   let id_perizinan = dataperizinan.id_perizinan;
+  //   let jenis = dataperizinan.jenis;
+  //   let tanggal_awal = dataperizinan.tanggal_awal;
+  //   let tanggal_akhir = dataperizinan.tanggal_akhir;
+  //   let keterangan_dosen = dataperizinan.keterangan_dosen;
+  //   async function sendFonnte(data) {
+  //     const url = "https://api.fonnte.com/send";
 
-      const customHeaders = {
-        "Content-Type": "application/json",
-        Authorization: "3m2C@EGb1xj5d0N2Iqis",
-      };
+  //     const customHeaders = {
+  //       "Content-Type": "application/json",
+  //       Authorization: "3m2C@EGb1xj5d0N2Iqis",
+  //     };
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: customHeaders,
-        body: JSON.stringify(data),
-      });
-      console.log(await response.json());
-    }
-    const datamhs = {
-      target: no_telp_mhs,
-      message:
-        "Hai " +
-          nama_mhs +
-          "\nData Perizinanmu Ditolak Oleh Wali Dosen!" +
-          "\n" +
-          "\n" +
-          "ID Perizinan :" +
-          id_perizinan +
-          "\nJenis Perizinan :" +
-          jenis +
-          "\nTanggal Awal Perizinan :" +
-          tanggal_awal +
-          "\nTanggal Akhir Perizinan :" +
-          tanggal_akhir +
-          "\nKeterangan Walidosen: " +
-          " " +
-          req.body.keterangan_dosen ??
-        "-" + "\n\n\nStudent Leaving Permission | JTK 2BD3",
-    };
-    sendFonnte(datamhs);
-    console.log(datamhs);
+  //     const response = await fetch(url, {
+  //       method: "POST",
+  //       headers: customHeaders,
+  //       body: JSON.stringify(data),
+  //     });
+  //     console.log(await response.json());
+  //   }
+  //   const datamhs = {
+  //     target: no_telp_mhs,
+  //     message:
+  //       "Hai " +
+  //         nama_mhs +
+  //         "\nData Perizinanmu Ditolak Oleh Wali Dosen!" +
+  //         "\n" +
+  //         "\n" +
+  //         "ID Perizinan :" +
+  //         id_perizinan +
+  //         "\nJenis Perizinan :" +
+  //         jenis +
+  //         "\nTanggal Awal Perizinan :" +
+  //         tanggal_awal +
+  //         "\nTanggal Akhir Perizinan :" +
+  //         tanggal_akhir +
+  //         "\nKeterangan Walidosen: " +
+  //         " " +
+  //         req.body.keterangan_dosen ??
+  //       "-" + "\n\n\nStudent Leaving Permission | JTK 2BD3",
+  //   };
+  //   sendFonnte(datamhs);
+  //   console.log(datamhs);
 
-    const dataORTU = {
-      target: no_telp_ortu,
-      message:
-        "Hai Orang Tua dari " +
-          nama_mhs +
-          "\nData Perizinan Ananda " +
-          nama_mhs +
-          " Ditolak Oleh Wali Dosen!" +
-          "\n" +
-          "\n" +
-          "ID Perizinan :" +
-          id_perizinan +
-          "\nJenis Perizinan :" +
-          jenis +
-          "\nTanggal Awal Perizinan :" +
-          tanggal_awal +
-          "\nTanggal Akhir Perizinan :" +
-          tanggal_akhir +
-          "\nKeterangan Walidosen: " +
-          "" +
-          req.body.keterangan_dosen ??
-        "-" + "\n\n\nStudent Leaving Permission | JTK 2BD3",
-    };
-    sendFonnte(dataORTU);
-    console.log(datamhs);
-  }
+  //   const dataORTU = {
+  //     target: no_telp_ortu,
+  //     message:
+  //       "Hai Orang Tua dari " +
+  //         nama_mhs +
+  //         "\nData Perizinan Ananda " +
+  //         nama_mhs +
+  //         " Ditolak Oleh Wali Dosen!" +
+  //         "\n" +
+  //         "\n" +
+  //         "ID Perizinan :" +
+  //         id_perizinan +
+  //         "\nJenis Perizinan :" +
+  //         jenis +
+  //         "\nTanggal Awal Perizinan :" +
+  //         tanggal_awal +
+  //         "\nTanggal Akhir Perizinan :" +
+  //         tanggal_akhir +
+  //         "\nKeterangan Walidosen: " +
+  //         "" +
+  //         req.body.keterangan_dosen ??
+  //       "-" + "\n\n\nStudent Leaving Permission | JTK 2BD3",
+  //   };
+  //   sendFonnte(dataORTU);
+  //   console.log(datamhs);
+  // }
 
   Perizinan.update(req.body, {
     where: { id_perizinan: id },
