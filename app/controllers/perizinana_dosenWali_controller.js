@@ -1,7 +1,9 @@
 const db = require("../models");
 const Perizinan = db.perizinan;
+const detailPerizinan = db.detailPerizinan;
+const mahasiswa = db.mahasiswa;
 const nodemailer = require("nodemailer");
-const { Op, Sequelize } = require("sequelize");
+const { Op, Sequelize, fn } = require("sequelize");
 const { EMAIL, PASSWORD } = require("../../env.js");
 
 exports.findAll = (req, res) => {
@@ -48,17 +50,19 @@ exports.findAllbyDosen = (req, res) => {
 
 exports.findAllbyMhs = (req, res) => {
   const walidosen_id = req.params.walidosen_id;
+
   Perizinan.findAll({
     include: [
       {
-        model: db.mahasiswa,
+        model: mahasiswa,
         where: {
           walidosen_id: walidosen_id,
         },
+        attributes: ["nim", "nama"],
       },
       {
-        model: db.detailPerizinan,
-        // Make sure this alias matches your association configuration
+        model: detailPerizinan,
+        attributes: ["jumlah_jam"],
       },
     ],
     where: {
@@ -67,29 +71,45 @@ exports.findAllbyMhs = (req, res) => {
       },
     },
     attributes: [
-      [
-        Sequelize.fn(
-          "SUM",
-          Sequelize.literal(
-            "CASE WHEN perizinan.jenis = 'Sakit' THEN perizinan.detailPerizinan.jumlah_jam ELSE 0 END"
-          )
-        ),
-        "totalJamSakit",
-      ],
-      [
-        Sequelize.fn(
-          "SUM",
-          Sequelize.literal(
-            "CASE WHEN perizinan.jenis = 'Izin' THEN perizinan.detailPerizinan.jumlah_jam ELSE 0 END"
-          )
-        ),
-        "totalJamIzin",
-      ],
+      "mahasiswa.nim",
+      "mahasiswa.nama",
+      "perizinan.id_perizinan",
+      "detailPerizinans.id_perizinan", // Include this line if necessary
     ],
-    group: ["mahasiswa.nim"],
+    group: [
+      "mahasiswa.nim",
+      "mahasiswa.nama",
+      // Include this line if necessary
+    ],
   })
     .then((data) => {
-      res.send(data);
+      // Process the result to calculate totalJam
+      const formattedData = data.map((item) => ({
+        mahasiswa: {
+          nim: item.mahasiswa.nim,
+          nama: item.mahasiswa.nama,
+        },
+      }));
+
+      // Calculate totalJam separately
+      const promises = formattedData.map((item) =>
+        detailPerizinan
+          .findAll({
+            where: {
+              id_perizinan: item.mahasiswa.id_perizinan, // Adjust the field name as needed
+            },
+            attributes: [
+              [Sequelize.fn("SUM", Sequelize.col("jumlah_jam")), "totalJam"],
+            ],
+          })
+          .then((result) => {
+            item.totalJam = result[0].dataValues.totalJam || 0;
+          })
+      );
+
+      Promise.all(promises).then(() => {
+        res.send(formattedData);
+      });
     })
     .catch((err) => {
       res.status(500).send({
