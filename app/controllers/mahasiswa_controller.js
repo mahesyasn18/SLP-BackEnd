@@ -1,7 +1,10 @@
 const { angkatan } = require("../models");
 const db = require("../models");
+const Perizinan = db.perizinan;
 const Mahasiswa = db.mahasiswa;
+const detailPerizinan = db.detailPerizinan;
 const XLSX = require("xlsx");
+const { Op, sequelize, Sequelize } = require("sequelize");
 const fs = require("fs");
 const nodemailer = require("nodemailer");
 const { EMAIL, PASSWORD } = require("../../env.js");
@@ -285,4 +288,52 @@ exports.findByClass = (req, res) => {
         message: err.message || "Some error occurred while retrieving Kelas.",
       });
     });
+};
+// Replace '<your model paths>' with the actual paths to your models
+
+exports.getSakitIzinMhs = async (req, res) => {
+  try {
+    const data = await Mahasiswa.findAll({
+      attributes: [
+        "nim",
+        "nama",
+        [
+          Sequelize.literal(
+            'COALESCE(SUM(CASE WHEN "perizinan"."jenis" = \'Sakit\' THEN "perizinan->detailPerizinans"."jumlah_jam" ELSE 0 END), 0)'
+          ),
+          "total_sakit_hours",
+        ],
+        [
+          Sequelize.literal(
+            'COALESCE(SUM(CASE WHEN "perizinan"."jenis" = \'Izin\' THEN "perizinan->detailPerizinans"."jumlah_jam" ELSE 0 END), 0)'
+          ),
+          "total_izin_hours",
+        ],
+      ],
+      include: [
+        {
+          model: Perizinan,
+          where: { id_semester: "01-2023" },
+          attributes: [],
+          required: false,
+          include: [
+            {
+              model: detailPerizinan,
+              attributes: [],
+              required: false,
+            },
+          ],
+        },
+      ],
+      group: ["mahasiswa.nim", "mahasiswa.nama"],
+    });
+
+    console.log(data);
+    res.send(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({
+      message: err.message || "Some error occurred while retrieving data.",
+    });
+  }
 };

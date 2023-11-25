@@ -1,8 +1,8 @@
-const { DataTypes } = require("sequelize");
-const bcrypt = require("bcrypt");
+const { DataTypes } = require('sequelize');
+const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, Sequelize) => {
-  const Kaprodi = sequelize.define("kaprodi", {
+  const Kaprodi = sequelize.define('kaprodi', {
     id_kaprodi: {
       type: DataTypes.STRING,
       primaryKey: true,
@@ -15,7 +15,7 @@ module.exports = (sequelize, Sequelize) => {
       type: DataTypes.STRING,
       set(value) {
         const hashedPassword = bcrypt.hashSync(value, 10);
-        this.setDataValue("password", hashedPassword);
+        this.setDataValue('password', hashedPassword);
       },
     },
   });
