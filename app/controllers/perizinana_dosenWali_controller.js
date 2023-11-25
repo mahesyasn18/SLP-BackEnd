@@ -54,7 +54,7 @@ exports.findAllbyMhs = (req, res) => {
   Perizinan.findAll({
     include: [
       {
-        model: mahasiswa,
+        model: Mahasiswa,
         where: {
           walidosen_id: walidosen_id,
         },

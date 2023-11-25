@@ -368,6 +368,12 @@ module.exports = (app) => {
     kaprodi.findAll
   );
 
+  app.delete(
+    "/api/admins/kaprodi/destroy/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    kaprodi.delete
+  );
+
   app.get(
     "/api/admins/mengajar",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -610,6 +616,12 @@ module.exports = (app) => {
     "/api/kaprodiDashboard/graph/:prodi_id",
     [authJwt.verifyToken, authJwt.isKaprodi],
     kaprodiDashboard.findDataGraph
+  );
+
+  app.get(
+    "/api/kaprodi/rekap/mahasiswa/:prodi_id",
+    [authJwt.verifyToken, authJwt.isKaprodi],
+    mahasiswa.getSakitIzinKaprodi
   );
 
   /* 
