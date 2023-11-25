@@ -62,6 +62,48 @@ exports.findAllAngkatanMatkul = (req, res) => {
     });
 };
 
+exports.findAllAngkatanMatkulperClass = (req, res) => {
+  const tahun_angkatan = req.params.angkatan;
+  const nama_kelas = req.params.kelas;
+  const id_prodi = req.params.id_prodi;
+  db.AngkatanMatkul.findAll({
+    include: [
+      { model: db.semester },
+      {
+        model: db.prodi,
+        where: {
+          id_prodi: id_prodi,
+        },
+      },
+      {
+        model: db.kelas,
+        where: {
+          nama_kelas: nama_kelas,
+        },
+      },
+      { model: db.detailMatkul, include: db.matakuliah },
+      {
+        model: db.angkatan,
+        where: {
+          tahun_angkatan: tahun_angkatan,
+        },
+      },
+    ],
+  })
+    .then((data) => {
+      const filteredData = data.filter(
+        (item) => item?.semester?.status_semester === 1
+      );
+      res.send(filteredData);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving AngkatanMatkul.",
+      });
+    });
+};
+
 exports.findAllAngkatanMatkulperMahasiswa = (req, res) => {
   const id_semester = req.params.id_semester;
   const id_prodi = req.params.id_prodi;
@@ -99,6 +141,58 @@ exports.findAllAngkatanMatkulperMahasiswaSelected = (req, res) => {
   })
     .then((data) => {
       res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving AngkatanMatkul.",
+      });
+    });
+};
+
+exports.findAllAngkatanMatkulKelas = (req, res) => {
+  const id_prodi = req.params.id;
+  db.AngkatanMatkul.findAll({
+    include: [
+      { model: db.semester },
+      {
+        model: db.prodi,
+        attributes: [],
+        where: {
+          id_prodi: id_prodi,
+        },
+      },
+      { model: db.kelas, attributes: ["nama_kelas"] },
+      {
+        model: db.detailMatkul,
+        include: { model: db.matakuliah, attributes: [] },
+        attributes: [],
+      },
+      { model: db.angkatan, attributes: ["tahun_angkatan"] },
+    ],
+  })
+    .then((data) => {
+      console.log("Original Data:", data);
+
+      const filteredData = data.filter(
+        (item) => item?.semester?.dataValues?.status_semester === 1
+      );
+
+      console.log("Filtered Data:", filteredData);
+
+      const result = filteredData.map((item) => ({
+        nama_kelas: item.kela?.nama_kelas,
+        tahun_angkatan: item.angkatan?.tahun_angkatan,
+      }));
+
+      console.log("Result:", result);
+
+      // If you want to get distinct values based on nama_kelas and tahun_angkatan
+      const distinctResult = Array.from(
+        new Set(result.map((item) => JSON.stringify(item)))
+      ).map((item) => JSON.parse(item));
+
+      res.send(distinctResult);
     })
     .catch((err) => {
       res.status(500).send({
