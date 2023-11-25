@@ -36,8 +36,42 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
+  const semester_kuliah = req.params.id; // Assuming the parameter is named semester_kuliah
+  const id_prodi = req.params.id_prodi; // Assuming the parameter is named id_prodi
+
   DetailMatKul.findAll({
-    include: [db.prodi, db.matakuliah],
+    include: [
+      {
+        model: db.prodi,
+      },
+      {
+        model: db.matakuliah,
+        where: { semester_matakuliah: semester_kuliah }, // Adjust this based on your actual column name in the matakuliah table
+      },
+    ],
+    where: { prodi_id: id_prodi }, // Adjust this based on your actual column name in the prodi table
+  })
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving detail Matkul.",
+      });
+    });
+};
+
+exports.findAlls = (req, res) => {
+  DetailMatKul.findAll({
+    include: [
+      {
+        model: db.prodi,
+      },
+      {
+        model: db.matakuliah,
+      },
+    ],
   })
     .then((data) => {
       res.send(data);

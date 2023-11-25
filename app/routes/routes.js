@@ -272,9 +272,15 @@ module.exports = (app) => {
   );
 
   app.get(
-    "/api/admins/detailMatkul",
+    "/api/admins/detailMatkul/:id/:id_prodi",
     [authJwt.verifyToken, authJwt.isAdmin],
     detail_matkul.findAll
+  );
+
+  app.get(
+    "/api/admins/detailMatkul",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    detail_matkul.findAlls
   );
 
   app.get(
@@ -350,6 +356,18 @@ module.exports = (app) => {
     angkatan.findAllAngkatanMatkul
   );
 
+  app.get(
+    "/api/admins/jadwal/matkul/:angkatan/:kelas/:id_prodi",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    angkatan.findAllAngkatanMatkulperClass
+  );
+
+  app.get(
+    "/api/admins/jadwal/kelas/:id",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    angkatan.findAllAngkatanMatkulKelas
+  );
+
   app.post(
     "/api/admins/create/mengajar",
     [authJwt.verifyToken, authJwt.isAdmin],
@@ -378,6 +396,12 @@ module.exports = (app) => {
     "/api/admins/mengajar",
     [authJwt.verifyToken, authJwt.isAdmin],
     mengajar.findAllMengajar
+  );
+
+  app.get(
+    "/api/admins/mengajar/:tahun_angkatan/:kelas/:prodi",
+    [authJwt.verifyToken, authJwt.isAdmin],
+    mengajar.findAllMengajars
   );
 
   /* 
