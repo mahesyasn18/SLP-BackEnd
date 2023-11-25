@@ -342,6 +342,9 @@ exports.getSakitIzinMhs = async (req, res) => {
 
 exports.getSakitIzinKaprodi = async (req, res) => {
   const id_prodi = req.params.prodi_id;
+  const tahun_angkatan = req.params.angkatan;
+  const nama_kelas = req.params.kelas;
+
   try {
     const data = await Mahasiswa.findAll({
       attributes: [
@@ -377,11 +380,25 @@ exports.getSakitIzinKaprodi = async (req, res) => {
             },
           ],
         },
-        db.prodi,
-        db.angkatan,
-        db.kelas,
+        {
+          model: db.prodi,
+          where: {
+            id_prodi: id_prodi,
+          },
+        },
+        {
+          model: db.kelas,
+          where: {
+            nama_kelas: nama_kelas,
+          },
+        },
+        {
+          model: db.angkatan,
+          where: {
+            tahun_angkatan: tahun_angkatan,
+          },
+        },
       ],
-      where: { prodi_id: id_prodi },
       group: [
         "mahasiswa.nim",
         "mahasiswa.nama",

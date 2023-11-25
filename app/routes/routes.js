@@ -626,7 +626,7 @@ module.exports = (app) => {
 
   /* 
     ========================================
-    Routes Dashboard Admins
+    Routes Dashboard Kaprodi
     ========================================
   */
 
@@ -643,9 +643,21 @@ module.exports = (app) => {
   );
 
   app.get(
-    "/api/kaprodi/rekap/mahasiswa/:prodi_id",
+    "/api/kaprodi/rekap/mahasiswa/:angkatan/:kelas/:prodi_id",
     [authJwt.verifyToken, authJwt.isKaprodi],
     mahasiswa.getSakitIzinKaprodi
+  );
+
+  app.get(
+    "/api/kaprodi/:id",
+    [authJwt.verifyToken, authJwt.isKaprodi],
+    kaprodi.findOne
+  );
+
+  app.get(
+    "/api/kaprodi/jadwal/kelas/:id",
+    [authJwt.verifyToken, authJwt.isKaprodi],
+    angkatan.findAllAngkatanMatkulKelas
   );
 
   /* 
